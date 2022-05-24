@@ -1,0 +1,113 @@
+<h1>C/C++ 生成随机银行卡号可过Luhn校验</h1><p><br></p><p>如何随机生成一些能通过Lunhn算法校验的银行卡号数据 ? 要想生成真实卡号数据就必须要了解银行卡号的规则以及校验方式, 下面列出一些银行的卡号前六位规则 (以19位卡号为例)</p><pre><code>	<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">/*
+	436745 中国建设银行VISA龙卡贷记zd卡
+	622280 中国建设银行支付宝龙卡借记卡
+	458123 交通银行VISA普通卡
+	521899 交通银行MC信用卡普通卡
+	622260 交通银行太平洋卡借记卡
+	402674 上海银行VISA金卡
+	622892 上海银行借记卡
+	622188 中国回邮政储蓄绿卡借记卡
+	602969 北京银行京卡借记卡
+	622760 中国银行中银都市卡
+	623668 中国建设银行龙卡
+	*/</span></code></pre><p>银行卡前六位是发卡银行识别号（BIN），这个号码可以提供的信息包括这张卡属于哪个信用卡组织，这张卡由哪个银行发行，这张卡是什么类型的卡片。&nbsp;</p><p>银行卡的最后一位是校验位，用于卡号验证。 从第7位到倒数第2位是发卡银行使用的，包含的内容有开户行位置（发卡城市），卡号大序列等等，但是具体内容由发卡银行自己定义。</p><p><strong>Luhn算法/公式</strong></p><p>Luhn算法被用于最后一位为校验码的一串数字的校验，通过如下规则计算校验码的正确性：</p><ol><li>按照从右往左的顺序，从这串数字的右边开始，包含校验码(最后一位是校验码)，将偶数位的数字乘以2，如果得出的值大于9（如2 x 5 = 10）则计算这个值的个位数字和十位数字的和那么就是（ 1 ＋ 0 = 1）；</li><li>第一步操作过后会得到新的一串数字，计算所有数字的和（包含校验码）；</li><li>用第二步操作得到的和进行 “模10” 运算，其实就是判断得到的和能否被10整除，能则通过校验，反之不通过。</li></ol><p><strong>简单例子</strong></p><p>了解完Luhn算法的公式后，开始实践, 例如一串数: 788123</p><p>最后一位 (3) 为校验位，通过公式转换后的数字为: 587143</p><p>再将所有数字相加 5+8+7+1+4+3=28, 所得和不能被10整除因此校验不通过。</p><p><strong>银行卡随机生成思路</strong></p><p>可知银行卡号前六位为发卡银行代码, 最后一位为校验位, 要生成建设银行龙卡类型的卡号 ( 通常卡号为19位 ) 即: “623668” + 随机12位数字 + 校验位, 利用校验位数字来生成有效的银行卡号, 校验位之前的数字经过Luhn公式转换后所有数字相加得到一个和, 这个和 + 校验位数字要能被10整除, 因此弄个for循环用这个和去跟数字1到9进行尝试, 得到的和总有一次会成功被10整除, 此时得到的卡号就是有效的。</p><p><strong>C/C++代码实现</strong></p><pre><code class="lang-c++"><span class="h<b>.js</b>-function" style="border: 0px; vertical-align: baseline;"><span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span> <span class="h<b>.js</b>-title" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">main</span><span class="h<b>.js</b>-params" style="border: 0px; vertical-align: baseline;">()</span>
+</span>{
+	<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//银行类型的6位标识数字</span>
+	<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">string</span> card = <span class="h<b>.js</b>-string" style="border: 0px; vertical-align: baseline; color: rgb(162, 252, 162);">"623668"</span>;
+	srand((<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span>)time(<span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">0</span>));  <span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">// 产生随机种子  把0换成NULL也行</span>
+	<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//取12位随机数字</span>
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">for</span> (<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span> i = <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">0</span>; i &lt; <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">12</span>; i++)
+	{
+		<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">char</span> buffer[<span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">10</span>];
+		itoa(<span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">1</span> + rand() % <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">9</span>, buffer, <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">10</span>);
+		card += buffer;
+	}
+
+
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span> s = <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">0</span>;
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span> num = <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">0</span>;
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span> len = card.length() + <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">1</span>;
+
+	<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//校验位前一位是偶数位因此i初始化为2</span>
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">for</span> (<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span> i = <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">2</span>; i &lt;= len; i++)
+	{
+		<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//依次从右往左取出数字</span>
+		<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">char</span> buff = card[len - i];
+		num = atoi(&amp;buff);
+
+		<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//判断当前在奇数位还是偶数位</span>
+		<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">if</span> (i % <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">2</span> == <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">0</span>)
+		{
+			<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">if</span> ((num * <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">2</span>) &gt;= <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">10</span>)
+			{
+				<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//偶数位*2大于10, 大于10则为两位数</span>
+
+				<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">char</span> buffer[<span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">3</span>] = { <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">0</span> };
+				itoa(num * <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">2</span>, buffer, <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">10</span>);
+				<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//个位数与十位数相加</span>
+				s += (<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span>(buffer[<span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">0</span>]) - <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">48</span>) + (<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span>(buffer[<span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">1</span>]) - <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">48</span>);
+			}
+			<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">else</span>
+				<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//偶数位*2小于10则不用十位各位相加直接取出</span>
+				s += num * <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">2</span>;
+		}
+		<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">else</span>
+			<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//奇数位直接取出</span>
+			s += num;
+	}
+
+	<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//判断s+几才能被10整除</span>
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">for</span> (<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span> i = <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">0</span>; i &lt; <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">10</span>; i++)
+	{
+		<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">if</span> ((s + i) % <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">10</span> == <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">0</span>)
+		{
+			<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">char</span> buffer[<span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">2</span>] = { <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">0</span> };
+			itoa(i, buffer, <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">10</span>);
+			card += buffer;
+			<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">break</span>;
+		}
+
+	}
+
+	<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//输出有效卡号</span>
+	<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">cout</span> &lt;&lt; card &lt;&lt; <span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">endl</span>;
+
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">return</span> <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">0</span>;
+}</code></pre><p><strong>运行效果</strong></p><p><img src="https://66-1251737204.cos.ap-beijing-1.myqcloud.com/citext.cn/images/2020925/QQ%E6%88%AA%E5%9B%BE20200925200528.png" alt=""></p><p><strong>校验银行卡 C/C++代码实现:</strong></p><pre><code class="lang-c++"><span class="h<b>.js</b>-function" style="border: 0px; vertical-align: baseline;"><span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">bool</span> <span class="h<b>.js</b>-title" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">checkCard</span><span class="h<b>.js</b>-params" style="border: 0px; vertical-align: baseline;">(<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">string</span> card)</span>
+</span>{
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span> length = card.length();
+
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">if</span> (!(length == <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">16</span> || length == <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">19</span>)) {
+		<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">return</span> <span class="h<b>.js</b>-literal" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">false</span>;
+	}
+
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span> s = <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">0</span>;
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span> num = <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">0</span>;
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">for</span> (<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span> i = <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">0</span>; i &lt; length; i++)
+	{
+		<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">char</span> buff = card[i];
+		num = atoi(&amp;buff);
+
+		<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">if</span> ((i + <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">1</span>) % <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">2</span> == <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">0</span>)
+		{
+			<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">if</span> ((num * <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">2</span>) &gt;= <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">10</span>)
+			{
+				<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">char</span> buffer[<span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">3</span>] = { <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">0</span> };
+				itoa(num * <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">2</span>, buffer, <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">10</span>);
+
+				s += (<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span>(buffer[<span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">0</span>]) - <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">48</span>) + (<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span>(buffer[<span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">1</span>]) - <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">48</span>);
+			}
+			<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">else</span>
+				s += num * <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">2</span>;
+		}
+		<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">else</span>
+			s += num;
+	}
+
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">if</span> (s % <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">10</span> == <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">0</span>)
+	{
+		<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">return</span> <span class="h<b>.js</b>-literal" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">true</span>;
+	}
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">else</span> <span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">return</span> <span class="h<b>.js</b>-literal" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">false</span>;
+
+}<div><br></div></code></pre>

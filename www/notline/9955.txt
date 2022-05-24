@@ -1,0 +1,26 @@
+
+<h2>HAMC哈希散列</h2>
+
+<textarea id="hmackey" oninput="hmacshakaishi(getbyid('hmacstr').value,this.value);" style="width: 85%;height: 20px;" placeholder="请输入密钥，无密钥无法生成"></textarea>
+
+<textarea id="hmacstr" style="width: 99%;height: 120px;" placeholder="请输入源文本" oninput="hmacshakaishi(this.value,getbyid('hmackey').value);"></textarea>
+
+
+
+<input name="shadxk" type="radio" value='xx' checked="checked" onchange="romset('shadxk','xx');shatosmall();">小写</input>
+<input name="shadxk" type="radio" value='dx' onchange="romset('shadxk','dx');shatobig();">大写</input>
+
+<h4>HAMC-MD5<textarea readonly="readonly" id="y101" style="width: 99%;height: 30px;" placeholder="这里显示md5,点击可复制到剪辑板。" onclick="copyhandle(this.value,'yes')"></textarea></h4>
+
+<h4>HAMC-SHA1
+<textarea  readonly="readonly" id="y102" style="width: 99%;height: 30px;" placeholder="这里显示sha1,点击可复制到剪辑板。" onclick="copyhandle(this.value,'yes')"></textarea></h4>
+
+<h4>HAMC-SHA224
+<textarea readonly="readonly" id="y111" style="width: 99%;height: 30px;" placeholder="这里显示sha224,点击可复制到剪辑板。" onclick="copyhandle(this.value,'yes')"></textarea></h4>
+
+<h4>HAMC-SHA256
+<textarea readonly="readonly" id="y103" style="width: 99%;height: 30px;" placeholder="这里显示sha256,点击可复制到剪辑板。" onclick="copyhandle(this.value,'yes')"></textarea></h4>
+<h4>HAMC-SHA384
+<textarea readonly="readonly" id="y112" style="width: 99%;height: 30px;" placeholder="这里显示sha384,点击可复制到剪辑板。" onclick="copyhandle(this.value,'yes')"></textarea></h4>
+<h4>HAMC-SHA512
+<textarea readonly="readonly" id="y113" style="width: 99%;height: 30px;" placeholder="这里显示sha512,点击可复制到剪辑板。" onclick="copyhandle(this.value,'yes')"></textarea></h4>

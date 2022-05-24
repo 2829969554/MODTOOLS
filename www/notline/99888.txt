@@ -1,0 +1,50 @@
+
+<h2>进制转换器</h2>
+输入数值类型
+<select id="input_num" oninput="kaishijinzhi(getbyid('asdasd45664').value,getbyid('input_num').value); " class="input-small">
+                    <option value="2">2进制</option>
+                    <option value="3">3进制</option>
+                    <option value="4">4进制</option>
+                    <option value="5">5进制</option>
+                    <option value="6">6进制</option>
+                    <option value="7">7进制</option>
+                    <option value="8">8进制</option>
+                    <option value="9">9进制</option>
+                    <option value="10" selected>10进制</option>
+                    <option value="11">11进制</option>
+                    <option value="12">12进制</option>
+                    <option value="13">13进制</option>
+                    <option value="14">14进制</option>
+                    <option value="15">15进制</option>
+                    <option value="16">16进制</option>
+                    <option value="17">17进制</option>
+                    <option value="18">18进制</option>
+                    <option value="19">19进制</option>
+                    <option value="20">20进制</option>
+                    <option value="21">21进制</option>
+                    <option value="22">22进制</option>
+                    <option value="23">23进制</option>
+                    <option value="24">24进制</option>
+                    <option value="25">25进制</option>
+                    <option value="26">26进制</option>
+                    <option value="27">27进制</option>
+                    <option value="28">28进制</option>
+                    <option value="29">29进制</option>
+                    <option value="30">30进制</option>
+                    <option value="31">31进制</option>
+                    <option value="32">32进制</option>
+                    <option value="33">33进制</option>
+                    <option value="34">34进制</option>
+                    <option value="35">35进制</option>
+                    <option value="36">36进制</option>
+                    </select>
+
+<textarea id="asdasd45664" style="width: 99%;height: 90px;" placeholder="请输入任意进制数值" oninput="kaishijinzhi(this.value,getbyid('input_num').value);"></textarea>
+
+<input name="aaaaxx" type="radio" value='aaxx' checked="checked" onchange="romset('aaajsdx','xx');kaishijinzhi(getbyid('asdasd45664').value,getbyid('input_num').value);">小写</input>
+<input name="aaaaxx" type="radio" value='aadx' onchange="romset('aaajsdx','dx');kaishijinzhi(getbyid('asdasd45664').value,getbyid('input_num').value);">大写</input>
+
+<div>
+<h5 id="showwin">{text}进制
+<textarea  readonly="readonly" id="shou{text2}" style="width: 99%;height: 30px;" placeholder="这里显示当前进制数字,点击可复制到剪辑板。" onclick="copyhandle(this.value,'yes')"></textarea></h5>
+</div>

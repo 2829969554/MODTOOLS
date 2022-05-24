@@ -1,0 +1,24 @@
+
+<h2>标准哈希算法</h2>
+<textarea style="width: 99%;height: 120px;" placeholder="请输入源文本" oninput="shakaishi(this.value);"></textarea>
+
+<input name="shadxk" type="radio" value='xx' checked="checked" onchange="romset('shadxk','xx');shatosmall();">小写</input>
+<input name="shadxk" type="radio" value='dx' onchange="romset('shadxk','dx');shatobig();">大写</input>
+
+<h4>MD5<textarea readonly="readonly" id="y101" style="width: 99%;height: 30px;" placeholder="这里显示md5,点击可复制到剪辑板。" onclick="copyhandle(this.value,'yes')"></textarea></h4>
+
+<h4>SHA1
+<textarea  readonly="readonly" id="y102" style="width: 99%;height: 30px;" placeholder="这里显示sha1,点击可复制到剪辑板。" onclick="copyhandle(this.value,'yes')"></textarea></h4>
+
+<h4>SHA224
+<textarea readonly="readonly" id="y111" style="width: 99%;height: 30px;" placeholder="这里显示sha224,点击可复制到剪辑板。" onclick="copyhandle(this.value,'yes')"></textarea></h4>
+
+<h4>SHA256
+<textarea readonly="readonly" id="y103" style="width: 99%;height: 30px;" placeholder="这里显示sha256,点击可复制到剪辑板。" onclick="copyhandle(this.value,'yes')"></textarea></h4>
+<h4>SHA384
+<textarea readonly="readonly" id="y112" style="width: 99%;height: 30px;" placeholder="这里显示sha384,点击可复制到剪辑板。" onclick="copyhandle(this.value,'yes')"></textarea></h4>
+<h4>SHA512
+<textarea readonly="readonly" id="y113" style="width: 99%;height: 30px;" placeholder="这里显示sha512,点击可复制到剪辑板。" onclick="copyhandle(this.value,'yes')"></textarea></h4>
+
+<h4>RIPEMD-160
+<textarea readonly="readonly" id="y114" style="width: 99%;height: 30px;" placeholder="这里显示RIPEMD-160,点击可复制到剪辑板。" onclick="copyhandle(this.value,'yes')"></textarea></h4>

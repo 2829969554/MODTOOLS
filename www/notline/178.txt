@@ -1,0 +1,26 @@
+<pre><code class="lang-c++">#include &lt;iostream&gt;<iostream>
+#include &lt;string&gt;<string>
+using namespace std;
+class PI {
+public:
+    static int main() {
+        string s;
+        s.resize(256);
+        double x = 10, y = 9; // y越大pi的值越精准。
+        for (double n = 10; n &lt; pow(x, y) ; n *= 10) {
+            sprintf((char*)s.data(), "getpi(n): n=%.0lf, pi=%.31lf\n", n, getpi(n));
+            cout &lt;&lt; s;
+        }
+        return 0;
+    }
+    static double getpi(double n) {
+        double pi = 1;
+        for (double i = 3, j = 0; i &lt; n; i += 2, ++j)
+           ((int)j % 2) == 0 ? pi -= 1 / i : pi += 1 / i;
+        return pi * 4;
+    }
+};
+int main()
+{
+    return PI::main();
+}<br></string></iostream></code></pre>

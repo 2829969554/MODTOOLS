@@ -1,0 +1,24 @@
+<h4>支持解析所有短视频APP视频链接。</h4>
+
+<textarea id='y106' style="width: 99%;height: 120px;" placeholder="请把对应短视频的链接复制到此处。"></textarea>
+
+<p><a style="font-size:20px;" onclick="var reg= /(https?|http|ftp|file):\/\/[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]/g;dxpjiexi(getbyid('y106').value.match(reg));">开始解析</a>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a style="font-size:20px;" onclick="getbyid('hrefaa').style.display='none';getbyid('y106').value='';getbyid('y155').value='';getbyid('myvideo').style.display='none';getbyid('myvideo').pause();">一键清空</a>
+
+</p>
+
+<br/>
+<a onclick='appalert("下载中..请不要重复点击！");appdownload(getbyid("y155").value);' id='hrefaa' style="font-size:20px;display:none;"></a>
+
+
+
+
+
+        <video style="display:none;" id="myvideo" width="100%" height="auto" controls="controls" loop>
+            <source src="" type='video/mp4' /> 
+        </video>
+
+		
+		<textarea  readonly="readonly" id='y155' style="width: 99%;height: 180px;" placeholder="这里显示经过解析无水印的链接，点击可复制。" onclick="strcopy(this.value,1);"></textarea>
+		

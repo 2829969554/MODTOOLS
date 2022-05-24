@@ -1,0 +1,675 @@
+<h1><strong><span style="">C++ 学习笔记 By Citext</span><br></strong></h1><p><strong><span style=""><br></span></strong></p><p><strong>C++ 深拷贝与浅拷贝</strong></p><ul><li>系统默认提供的拷贝构造只会进行简单的值拷贝, 如果成员属性中有指向堆区空间的数据, 那么简单的浅拷贝会导致重复释放内存的异常。</li><li>解决上述问题, 需要自己提供拷贝构造函数, 进行深拷贝。</li></ul><p><strong>C++ 构造函数调用</strong></p><pre><code><span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//括号调用</span>
+person p; <span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//调用的默认构造函数</span>
+<span class="h<b>.js</b>-function" style="border: 0px; vertical-align: baseline;">person <span class="h<b>.js</b>-title" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">p1</span><span class="h<b>.js</b>-params" style="border: 0px; vertical-align: baseline;">(<span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">1</span>)</span></span>;<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//调用的有参构造函数</span>
+<span class="h<b>.js</b>-function" style="border: 0px; vertical-align: baseline;">person <span class="h<b>.js</b>-title" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">p2</span><span class="h<b>.js</b>-params" style="border: 0px; vertical-align: baseline;">(p)</span></span>;<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//调用拷贝构造函数</span>
+
+<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//显示</span>
+person p3 = person();<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//调用的默认构造函数</span>
+person p4 = person(<span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">1</span>);<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//调用的有参构造函数</span>
+person p5 = person(p4);<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//调用拷贝构造函数</span>
+
+<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//其他</span>
+person p6 = p5;<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//实际上等于 person p6 = person(p5)</span>
+person p7 = <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">1</span>;<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//实际上等于 person p7 = person(1)</span></code></pre><p><strong>C++ 构造函数列表初始化语法</strong></p><p>在构造函数后面加 ” : 属性(值, 参数) , 属性(值, 参数) …… “</p><p>假设我们有个human类, 并且私有成员变量有a, b, c, 下面演示如何用初始化列表方式来初始化abc。</p><pre><code>例子:
+human() : a(<span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">10</span>) , b(<span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">20</span>) , c(<span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">30</span>)
+{
+      <span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//.........</span>
+}
+
+这样就可以成功初始化a, b, c了, 当然这里的<span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">10</span>,<span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">20</span>,<span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">30</span>可以是参数。</code></pre><p><strong>C++ 类对象作为成员时的构造析构顺序</strong></p><p>当类对象作为类的成员时, 构造顺序是按定义顺序构造成员类对象, 最后才构造自己, 析构时是先析构自己, 最后倒着来析构成员。</p><p>总结: 析构顺序与构造顺序相反。</p><p><strong>C++</strong>&nbsp;<strong>explicit 关键字</strong></p><p>作用: 防止构造函数中的隐式类型转换</p><pre><code>例子:
+<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">class</span> <span class="h<b>.js</b>-title" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">human</span>
+{
+      human(<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span> a){}
+};
+
+human h = <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">1</span>; <span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//其实这句代码隐式的进行了转换 等价于 human h = human(1);</span>
+
+怎么禁止隐式类型转换呢? 函数前面添加 <span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">explicit</span> 即可
+
+<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">class</span> <span class="h<b>.js</b>-title" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">human</span>
+{
+      <span class="h<b>.js</b>-function" style="border: 0px; vertical-align: baseline;"><span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">explicit</span> <span class="h<b>.js</b>-title" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">human</span>(<span class="h<b>.js</b>-params" style="border: 0px; vertical-align: baseline;"><span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span> a</span>)</span>{}
+};
+
+human h = <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">1</span>; <span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//此时这句代码已经编译不通过了</span>
+<span class="h<b>.js</b>-function" style="border: 0px; vertical-align: baseline;">human <span class="h<b>.js</b>-title" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">h</span>(<span class="h<b>.js</b>-params" style="border: 0px; vertical-align: baseline;"><span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">1</span></span>)</span>; <span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//需要这样调用才行</span></code></pre><p><strong>C++ 类静态成员变量</strong></p><ul><li>编译阶段分配内存</li><li>所有对象共享数据</li><li>通过对象访问, 通过类名访问</li><li>有权限控制</li><li>类内进行声明, 类外初始化</li></ul><p><strong>C++ 类静态成员函数</strong></p><ul><li>可以访问静态成员变量, 不可以访问普通成员变量</li><li>普通成员函数都可以访问</li><li>静态成员函数也有权限</li><li>可以通过对象访问, 通过类名访问</li></ul><p><strong>C++ 单例模式</strong></p><ul><li>目的: 保证一个类仅有一个实例，并提供一个访问它的全局访问点，主要解决一个全局使用的类频繁地创建与销毁。</li><li>将默认构造 和 拷贝构造 私有化, 防止在堆与栈上创建新的对象实例</li><li>内部维护一个 对象指针, 并且私有化</li><li>对外提供 getIns() 方法来访问这个对象指针</li><li>保证类中只能实例化唯一的对象</li></ul><p><strong>C++ 类对象模型</strong></p><ul><li>成员变量和成员函数是分开储存的</li><li>空类的大小为 1</li><li>只有非静态成员才属于对象身上</li></ul><p><strong>C++</strong>&nbsp;<strong>this指针</strong></p><ul><li>this指针永远指向当前对象</li><li>this指针可以解决成员变量名称与方法形参名称冲突</li><li>*this 是对象本体</li><li>非静态成员函数才有this指针</li></ul><p><strong>C++ 类的空指针访问成员函数</strong></p><ul><li>如果成员函数没有用到this，那么空指针可以直接访问</li><li>如果成员函数用到this指针，就要注意，可以加if判断this是否为空，为空直接返回避免程序崩溃</li></ul><p><strong>C++</strong>&nbsp;<strong>常函数和常对象</strong></p><ul><li>常函数 void func() const {}</li><li>常函数 原理是通过修饰this指针，const Type *const this</li><li>常函数 不能修改this指针指向的值</li><li>若函数已经定义为常函数但还想修改某个成员变量的值, 就要在成员变量定义前面加上mutable进行修饰</li></ul><p><strong>C++</strong>&nbsp;<strong>常对象</strong></p><ul><li>常对象 在对象前加入 const 修饰 ， const 对象 名称</li><li>常对象 不可以调用普通的成员函数，但可以调用常函数</li></ul><p><strong>C++</strong>&nbsp;<strong>友元函数和友元类</strong></p><p>全局友元函数：</p><ul><li>全局函数写到类中申明，并且最前面写关键字friend</li></ul><p>将整个类作为友元类：</p><ul><li>friend class 类名</li><li>友元类的权限是单向的不可传递的</li></ul><p>将类成员函数作为友元：</p><ul><li>函数返回值 friend 类名::函数名( ….. );</li></ul><p><strong>C++</strong>&nbsp;<strong>运算符重载</strong></p><p>“+” 号运算符重载：</p><ul><li>如果想让自定义数据类型进行 + 运算，那么就需要重载 + 运算符</li><li>在成员函数 或者 全局函数里重写一个 + 运算符的函数</li><li>函数名 operator+() { }</li><li>运算符重载也可以重载多个版本</li></ul><p>“&lt;&lt;” 左移运算符重载:</p><ul><li>cout&lt;&lt; 对自定义数据类型进行输出, 重载函数必须写到全局范围中</li><li>不要随意滥用符号重载</li><li>内置数据类型 的运算符是不可以重载的</li><li>如果在重载函数中要操作类的私有成员, 那么就要把重载函数设置为类的友元函数</li></ul><p>例子实现:</p><pre><code>ostream&amp; <span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">operator</span>&lt;&lt;(ostream&amp; <span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">cout</span>,  human&amp; h)
+{
+   <span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//............</span>
+   <span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">return</span> <span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">cout</span>;
+}
+</code></pre><p>“++” 运算符前置后置重载：</p><ul><li>(++myint) 前置++ , 先++ 后返回自身</li><li>(myint++) 后置++ , 先保存原有的值, 再内部++, 最后返回临时的数据</li></ul><p>例子实现:</p><pre><code>myint &amp; <span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">operator</span>++( ) <span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//前置++重载 , 引用返回</span>
+{
+   <span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">this</span>-&gt;a++;
+   <span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">return</span> *<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">this</span>;
+}
+
+后置++运算符
+myint <span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">operator</span>++( <span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span> ) <span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//后置++重载 , 有个int占位, 并且按值返回</span>
+{
+ myint tmp =  *<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">this</span>;
+ <span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">this</span>-&gt;a++;
+ <span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">return</span> tmp;
+}</code></pre><p>“=” 赋值运算符重载：</p><ul><li>系统默认给类提供的赋值运算符是简单的值拷贝</li><li>如果类中有指向堆区的指针, 就会出现深浅拷贝的问题, 所以需要重载 “=” 号赋值运算符</li><li>如果想链式编程就返回类引用</li></ul><p>例子:</p><pre><code>human &amp;<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">operator</span>=(human &amp;h)
+{
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">if</span> (<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">this</span>-&gt;name != <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">0</span>) <span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//这里需要判断本类是否有数据, 有的话必须释放掉再拷贝, 否则会内存泄漏</span>
+	{
+		<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">delete</span> <span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">this</span>-&gt;name;
+		<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">this</span>-&gt;name = <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">0</span>;
+	}
+
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">this</span>-&gt;name = <span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">new</span> <span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">char</span>[<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">strlen</span>(h.name) + <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">1</span>];
+	<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">strcpy</span>(<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">this</span>-&gt;name, h.name);
+
+
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">return</span> *<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">this</span>;
+}
+
+human h1;
+human h2;
+human h3;
+
+h1 = h2 = h3; <span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//完美执行通过</span></code></pre><p>“[ ]” 中括号运算符重载:</p><ul><li>需要注意返回数据的引用, 这样才能作为左值, 假设不返回引用的话就无法 xx[xx]=xx 这样的操作。</li></ul><p>例子:</p><pre><code><span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span> &amp; myint::<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">operator</span>[](<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span> index)
+{
+      <span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">return</span> <span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">this</span>-&gt;pAddress[index];
+}</code></pre><p><strong>C++</strong>&nbsp;<strong>简单实现智能指针思路</strong></p><ul><li>写个智能指针类来托管new出来的person对象, 当智能指针类析构时再把托管的person指针给delete掉从而达到智能释放.</li><li>为了让智能指针类像普通new出来的类一样使用, 就需要重载 “-&gt;” 和 ” * “</li></ul><p><strong>C++ 继承</strong></p><p>继承引出:</p><ul><li>网页有很多公共的部分, 导致实现的时候有很多重复的代码, 这样就引出了继承</li><li>基类(父类) 公共的网页</li><li>派生类(子类) 实现不同的内容</li><li>可以解决解决代码复用过多</li><li>语法: class 子类 :(继承方式) 父类</li></ul><p>继承方式:</p><ul><li>不管是 公有, 保护, 还是私有方式继承, 基类中的私有属性, 都不可以继承</li></ul><p>公有继承:</p><ul><li>父类中的protected 在子类中是 protected</li><li>父类中的public 在子类中是public</li></ul><p>保护继承:</p><ul><li>父类中的protected 在子类中是protected</li><li>父类中的public 在子类中是 protected</li></ul><p>私有继承:</p><ul><li>父类中的protected 在子类中是private</li><li>父类中的public 在子类中是private</li></ul><p>继承中的对象模型:</p><ul><li>子类会继承父类中的所有内容, 包括了私有属性, 只是我们访问不到, 被编译器隐藏了</li></ul><p>继承中的构造和析构顺序:</p><ul><li>子类创建对象时, 先调用父类的构造, 然后调用自身构造</li><li>析构顺序与构造顺序相反</li><li>子类是不会继承父类构造函数和析构函数</li><li>补充内容, 如果父类中没有合适的默认构造, 那么子类可以利用初始化列表的方式, 显示的调用父类的其他构造</li></ul><p>继承中的同名函数处理:</p><ul><li>成员属性, 优先调用当前子类的, 如果想调用父类需要加上作用域</li><li>成员函数, 优先调用当前子类的, 父类所有版本会被屏蔽隐藏掉, 除非加上作用域</li></ul><p>继承中的静态成员处理:</p><ul><li>类似非静态成员函数的处理</li><li>如果想访问父类中的成员加作用域即可</li></ul><p>多继承的概念以及问题:</p><ul><li>多继承写法 class A:public base1, public base2</li><li>函数名重名的话加上作用域调用即可</li></ul><p>菱形继承问题以及解决:</p><p>先看代码:</p><pre><code><span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">class</span> Animal
+{
+<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">public</span>:
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span> m_Age;
+};
+
+<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//Sheep虚基类继承</span>
+<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">class</span> Sheep : <span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">virtual</span> <span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">public</span> Animal
+{
+<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">public</span>:
+
+};
+
+<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//Tuo虚基类继承</span>
+<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">class</span> Tuo : <span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">virtual</span> <span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">public</span> Animal
+{
+<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">public</span>:
+
+};
+
+<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">class</span> SheepTuo :<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">public</span> Sheep, <span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">public</span> Tuo
+{
+
+};
+
+<span class="h<b>.js</b>-function" style="border: 0px; vertical-align: baseline;"><span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span> <span class="h<b>.js</b>-title" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">main</span><span class="h<b>.js</b>-params" style="border: 0px; vertical-align: baseline;">()</span>
+</span>{
+	SheepTuo st;
+	st.Sheep::m_Age = <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">10</span>;
+	st.Tuo::m_Age = <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">20</span>;
+
+	<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">cout</span> &lt;&lt; st.Sheep::m_Age &lt;&lt; <span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">endl</span>;<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//需要作用域访问</span>
+	<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">cout</span> &lt;&lt; st.Tuo::m_Age &lt;&lt; <span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">endl</span>;<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//需要加作用域访问</span>
+
+	<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">cout</span> &lt;&lt; st.m_Age &lt;&lt; <span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">endl</span>; <span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//加上虚继承后, 操作的是同一份数据, 而且不需要加作用域了</span>
+
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">return</span> <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">0</span>;
+}</code></pre><ul><li>sheepTuo 内部结构: vbptr 虚基类指针, 指向一张 虚基类表, 再通过表找到偏移量, 最后找到共有的数据</li></ul><p><strong>C++ 多态</strong></p><p>多态的成立条件:</p><ul><li>有继承</li><li>子类重写父类虚函数函数<ul><li>返回值, 函数名称, 函数参数个数, 参数类型, 必须和父类虚函数完全一致</li><li>子类中 virtual 关键字可写可不写, 建议写</li></ul></li><li>类型兼容, 父类指针, 父类引用, 指向 子类对象</li></ul><p>多态分类:</p><ul><li>静态多态 函数重载</li><li>动态多态 虚函数 继承关系</li></ul><p>静态联编:</p><ul><li>地址在编译阶段就已经绑定好了</li></ul><p>动态联编:</p><ul><li>运行的时候再绑定地址</li></ul><p>什么叫多态:</p><ul><li>父类的引用或指针指向子类对象</li></ul><p>多态原理解析:</p><ul><li>当父类中有了虚函数后, 内部结构就发生了改变</li><li>内部多了一个 vfptr, vitrual function pointer 虚函数表指针, 指向vftable 虚函数表</li><li>父类中结构 vfptr &amp;Animal::speak</li><li>子类中 进行继承, 会继承父类的 vfptr vftable<ol><li>构造函数中 会将虚函数表指针 指向自己的虚函数表</li><li>如果发生了重写, 会替换掉虚函数表中原有的speak, 改为 &amp;Cat::speak</li></ol></li></ul><p><strong>C++ 抽象类和纯虚函数</strong></p><ul><li>纯虚函数的写法 virtual void func() = 0; 写了以后这个类就是抽象类了</li><li>抽象类 不可以实例化对象</li><li>如果一个类继承了抽象类, 就必须重写抽象类中的纯虚函数</li></ul><p><strong>C++ 虚析构和纯虚构</strong></p><ul><li>虚析构, 虚析构写法 virtual ~类名() , 可以解决通过父类指针指向子类对象时, 子类无法析构问题</li><li>纯虚析构, 纯虚析构函数写法 virtual func() = 0; 类内申明类外实现, 如果出现了纯虚析构函数, 这个类也算抽象类, 不可以实例化对象</li></ul><p><strong>C++ 类的向上类型转换和向下类型转换</strong></p><ul><li>基类转派生类(向下类型转换) 是不安全的</li><li>派生类转基类(向上类型转换) 是安全的</li><li>如果发生了多态, 不管向上还是向下类型转换总是安全的</li></ul><p><strong>C++ 函数模板</strong></p><p>函数模板基本使用:</p><ul><li>函数模板语法 template&lt;class 或 typename T&gt; 告诉编译器紧跟的代码里边出现T不要报错</li><li>myfunc(T a, T b) , 类型也需要传入, 类型的参数化<ul><li>myfunc(a, b) 自动类型推导按照a, b的类型来替换 T</li><li>myfunc(a,b) 显示指定T类型</li></ul></li></ul><p>函数模板与普通函数的区别以及调用规则:</p><ul><li>C++编译器优先考虑普通函数</li><li>可以通过空模板实参列表的语法限定编译器只能通过模板匹配</li><li>函数模板可以像普通函数那样重载</li><li>如果函数模板可以产生一个更好的匹配, 那么编译器会选择模板</li></ul><p>模板的机制:</p><ul><li>模板并不是万能的, 不能通用所有的数据类型</li><li>模板不能直接调用, 生成后的模板函数才可以调用</li><li>模板会二次编译, 第一次对模板进行编译, 第二次对替换模板中的T类型后的代码进行编译</li></ul><p>模板的局限性:</p><ul><li>模板不能解决所有类型</li><li>如果具体化的函数模板能够与调用时传入的参数类型最佳匹配, 那么编译器选择具体化的版本</li><li>具体化函数模板语法: template&lt;&gt; 返回值 函数名 &lt;具体类型&gt;( 参数 )</li></ul><p>来看一段代码:</p><pre><code><span class="h<b>.js</b>-meta" style="border: 0px; vertical-align: baseline; color: rgb(252, 155, 155);">#<span class="h<b>.js</b>-meta-keyword" style="border: 0px; vertical-align: baseline;">include</span><span class="h<b>.js</b>-meta-string" style="border: 0px; vertical-align: baseline;">&lt;string&gt;</span></span>
+<span class="h<b>.js</b>-meta" style="border: 0px; vertical-align: baseline; color: rgb(252, 155, 155);">#<span class="h<b>.js</b>-meta-keyword" style="border: 0px; vertical-align: baseline;">include</span><span class="h<b>.js</b>-meta-string" style="border: 0px; vertical-align: baseline;">&lt;iostream&gt;</span></span>
+<span class="h<b>.js</b>-meta" style="border: 0px; vertical-align: baseline; color: rgb(252, 155, 155);">#<span class="h<b>.js</b>-meta-keyword" style="border: 0px; vertical-align: baseline;">include</span><span class="h<b>.js</b>-meta-string" style="border: 0px; vertical-align: baseline;">&lt;math.h&gt;</span></span>
+
+<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">using</span> <span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">namespace</span> <span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">std</span>;
+
+<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">class</span> person 
+{
+<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">public</span>:
+	person(<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">string</span> name, <span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span> age)
+	{
+		m_name = name;
+		m_age = age;
+	}
+
+	<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">string</span> m_name;
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span> m_age;
+};
+
+<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">template</span>&lt;<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">class</span> T&gt;
+<span class="h<b>.js</b>-function" style="border: 0px; vertical-align: baseline;"><span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">bool</span> <span class="h<b>.js</b>-title" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">myCompare</span><span class="h<b>.js</b>-params" style="border: 0px; vertical-align: baseline;">(T &amp;a, T &amp;b)</span>
+</span>{
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">if</span> (a == b)
+	{
+		<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">return</span> <span class="h<b>.js</b>-literal" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">true</span>;
+	}
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">return</span> <span class="h<b>.js</b>-literal" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">false</span>;
+}
+
+<span class="h<b>.js</b>-function" style="border: 0px; vertical-align: baseline;"><span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span> <span class="h<b>.js</b>-title" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">main</span><span class="h<b>.js</b>-params" style="border: 0px; vertical-align: baseline;">()</span>
+</span>{
+	<span class="h<b>.js</b>-function" style="border: 0px; vertical-align: baseline;">person <span class="h<b>.js</b>-title" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">p1</span><span class="h<b>.js</b>-params" style="border: 0px; vertical-align: baseline;">(<span class="h<b>.js</b>-string" style="border: 0px; vertical-align: baseline; color: rgb(162, 252, 162);">"1"</span>, <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">10</span>)</span></span>;
+	<span class="h<b>.js</b>-function" style="border: 0px; vertical-align: baseline;">person <span class="h<b>.js</b>-title" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">p2</span><span class="h<b>.js</b>-params" style="border: 0px; vertical-align: baseline;">(<span class="h<b>.js</b>-string" style="border: 0px; vertical-align: baseline; color: rgb(162, 252, 162);">"1"</span>, <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">10</span>)</span></span>;
+	<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">cout</span> &lt;&lt; myCompare(p1, p2);
+
+
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">return</span> <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">0</span>;
+}</code></pre><p>以上代码是无法编译通过的, 因为模板无法对比自定义数据类型, 要想解决此问题就需要写出另一个指定了具体数据类型的函数模板, 就像下面这样</p><pre><code><span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">template</span>&lt;<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">class</span> T&gt;
+<span class="h<b>.js</b>-function" style="border: 0px; vertical-align: baseline;"><span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">bool</span> <span class="h<b>.js</b>-title" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">myCompare</span><span class="h<b>.js</b>-params" style="border: 0px; vertical-align: baseline;">(T &amp;a, T &amp;b)</span>
+</span>{
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">if</span> (a == b)
+	{
+		<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">return</span> <span class="h<b>.js</b>-literal" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">true</span>;
+	}
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">return</span> <span class="h<b>.js</b>-literal" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">false</span>;
+}
+
+<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//前面函数模板定义也不能丢掉, 因为后面这部分代码是为前面函数模板指定出来一个有具体化数据类型的函数模板(个人感觉类似函数重写)</span>
+<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//模板具体化自定义数据类型</span>
+<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">template</span>&lt;&gt; <span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">bool</span> myCompare&lt;person&gt;(person &amp;a, person &amp;b)
+{
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">if</span> (a.m_age == b.m_age &amp;&amp; a.m_name == b.m_name)
+	{
+		<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">return</span> <span class="h<b>.js</b>-literal" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">true</span>;
+	}
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">return</span> <span class="h<b>.js</b>-literal" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">false</span>;
+}</code></pre><p>还有一种骚操作:</p><pre><code><span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">template</span>&lt;<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">class</span> T&gt;
+<span class="h<b>.js</b>-function" style="border: 0px; vertical-align: baseline;"><span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">bool</span> <span class="h<b>.js</b>-title" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">mycompare</span><span class="h<b>.js</b>-params" style="border: 0px; vertical-align: baseline;">(T a, T b)</span>
+</span>{
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">if</span> (a.age == b.age)
+	{
+		<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">return</span> <span class="h<b>.js</b>-literal" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">true</span>;
+	}
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">return</span> <span class="h<b>.js</b>-literal" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">false</span>;
+}
+
+<span class="h<b>.js</b>-function" style="border: 0px; vertical-align: baseline;"><span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span> <span class="h<b>.js</b>-title" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">main</span><span class="h<b>.js</b>-params" style="border: 0px; vertical-align: baseline;">()</span>
+</span>{
+	<span class="h<b>.js</b>-function" style="border: 0px; vertical-align: baseline;">person <span class="h<b>.js</b>-title" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">p</span><span class="h<b>.js</b>-params" style="border: 0px; vertical-align: baseline;">(<span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">10</span>)</span></span>;
+	<span class="h<b>.js</b>-function" style="border: 0px; vertical-align: baseline;">person <span class="h<b>.js</b>-title" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">p1</span><span class="h<b>.js</b>-params" style="border: 0px; vertical-align: baseline;">(<span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">10</span>)</span></span>;
+	<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">cout</span>&lt;&lt;mycompare(p, p1);
+
+
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">return</span> <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">0</span>;
+}
+</code></pre><p>需要注意的是这种方法就只能对有age属性的类进行操作了。。。</p><p><strong>C++类模板</strong></p><p>类模板的使用:</p><pre><code><span class="h<b>.js</b>-meta" style="border: 0px; vertical-align: baseline; color: rgb(252, 155, 155);">#<span class="h<b>.js</b>-meta-keyword" style="border: 0px; vertical-align: baseline;">include</span><span class="h<b>.js</b>-meta-string" style="border: 0px; vertical-align: baseline;">&lt;string&gt;</span></span>
+<span class="h<b>.js</b>-meta" style="border: 0px; vertical-align: baseline; color: rgb(252, 155, 155);">#<span class="h<b>.js</b>-meta-keyword" style="border: 0px; vertical-align: baseline;">include</span><span class="h<b>.js</b>-meta-string" style="border: 0px; vertical-align: baseline;">&lt;iostream&gt;</span></span>
+<span class="h<b>.js</b>-meta" style="border: 0px; vertical-align: baseline; color: rgb(252, 155, 155);">#<span class="h<b>.js</b>-meta-keyword" style="border: 0px; vertical-align: baseline;">include</span><span class="h<b>.js</b>-meta-string" style="border: 0px; vertical-align: baseline;">&lt;math.h&gt;</span></span>
+<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">using</span> <span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">namespace</span> <span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">std</span>;
+
+<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">template</span>&lt;<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">class</span> T1, <span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">class</span> T2 = <span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span>&gt; <span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//可以有默认类型</span>
+<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">class</span> person
+{
+<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">public</span>:
+	person(T1 name, T2 age) 
+	{
+		<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">this</span>-&gt;m_name = name;
+		<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">this</span>-&gt;m_age = age;
+	}
+
+	<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">string</span> m_name;
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span> m_age;
+};
+
+<span class="h<b>.js</b>-function" style="border: 0px; vertical-align: baseline;"><span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span> <span class="h<b>.js</b>-title" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">main</span><span class="h<b>.js</b>-params" style="border: 0px; vertical-align: baseline;">()</span>
+</span>{
+	person&lt;<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">string</span>,<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span>&gt;p1(<span class="h<b>.js</b>-string" style="border: 0px; vertical-align: baseline; color: rgb(162, 252, 162);">"aa"</span>, <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">20</span>);<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//类模板无法自动类型推导, 需要显示指定类型</span>
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">return</span> <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">0</span>;
+}
+</code></pre><ul><li>类模板跟函数模板使用方法一致, 只不过template&lt;class ….&gt;后边紧跟的是类</li><li>类模板可以有默认类型参数, 而函数模板不可以</li><li>函数模板可以自动类型推导, 而类模板不可以</li></ul><p><strong>类模板作为函数参数传递</strong></p><pre><code><span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">template</span>&lt;<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">class</span> t1,<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">class</span> t2&gt;
+<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">class</span> person
+{
+<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">public</span>:
+	person(t1 name,t2 age)
+	{
+		<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">this</span>-&gt;m_name = name;
+		<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">this</span>-&gt;m_age = age;
+	}
+	<span class="h<b>.js</b>-function" style="border: 0px; vertical-align: baseline;"><span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">void</span> <span class="h<b>.js</b>-title" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">show</span><span class="h<b>.js</b>-params" style="border: 0px; vertical-align: baseline;">()</span> 
+	</span>{
+		<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">cout</span> &lt;&lt; <span class="h<b>.js</b>-string" style="border: 0px; vertical-align: baseline; color: rgb(162, 252, 162);">"姓名: "</span> &lt;&lt; m_name &lt;&lt; <span class="h<b>.js</b>-string" style="border: 0px; vertical-align: baseline; color: rgb(162, 252, 162);">"  年龄:"</span> &lt;&lt; m_age &lt;&lt; <span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">endl</span>;
+	}
+<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">private</span>:
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span> m_age;
+	<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">string</span> m_name;
+};</code></pre><ul><li>显示指定类型</li></ul><pre><code><span class="h<b>.js</b>-function" style="border: 0px; vertical-align: baseline;"><span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">void</span> <span class="h<b>.js</b>-title" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">dowork1</span><span class="h<b>.js</b>-params" style="border: 0px; vertical-align: baseline;">(person &lt;<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">string</span>, <span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span>&gt; &amp;p)</span>
+</span>{
+	p.show();
+}
+
+
+<span class="h<b>.js</b>-function" style="border: 0px; vertical-align: baseline;"><span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span> <span class="h<b>.js</b>-title" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">main</span><span class="h<b>.js</b>-params" style="border: 0px; vertical-align: baseline;">()</span>
+</span>{
+	person &lt;<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">string</span>, <span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span>&gt; p(<span class="h<b>.js</b>-string" style="border: 0px; vertical-align: baseline; color: rgb(162, 252, 162);">"大哥"</span>, <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">88</span>);
+	dowork1(p);
+
+
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">return</span> <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">0</span>;
+}</code></pre><ul><li>参数模板化</li></ul><pre><code><span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">template</span>&lt;<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">class</span> t1, <span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">class</span> t2&gt;
+<span class="h<b>.js</b>-function" style="border: 0px; vertical-align: baseline;"><span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">void</span> <span class="h<b>.js</b>-title" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">dowork2</span><span class="h<b>.js</b>-params" style="border: 0px; vertical-align: baseline;">(person &lt;t1, t2&gt; &amp;p)</span>
+</span>{
+	p.show();
+}
+
+<span class="h<b>.js</b>-function" style="border: 0px; vertical-align: baseline;"><span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span> <span class="h<b>.js</b>-title" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">main</span><span class="h<b>.js</b>-params" style="border: 0px; vertical-align: baseline;">()</span>
+</span>{
+	person &lt;<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">string</span>, <span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span>&gt; p(<span class="h<b>.js</b>-string" style="border: 0px; vertical-align: baseline; color: rgb(162, 252, 162);">"大哥"</span>, <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">88</span>);
+	dowork2(p);
+
+
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">return</span> <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">0</span>;
+}
+</code></pre><ul><li>整体模板化</li></ul><pre><code><span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">template</span>&lt;<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">class</span> t&gt;
+<span class="h<b>.js</b>-function" style="border: 0px; vertical-align: baseline;"><span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">void</span> <span class="h<b>.js</b>-title" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">dowork3</span><span class="h<b>.js</b>-params" style="border: 0px; vertical-align: baseline;">(t &amp;p)</span>
+</span>{
+	p.show();
+}
+
+<span class="h<b>.js</b>-function" style="border: 0px; vertical-align: baseline;"><span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span> <span class="h<b>.js</b>-title" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">main</span><span class="h<b>.js</b>-params" style="border: 0px; vertical-align: baseline;">()</span>
+</span>{
+	person &lt;<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">string</span>, <span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span>&gt; p(<span class="h<b>.js</b>-string" style="border: 0px; vertical-align: baseline; color: rgb(162, 252, 162);">"大哥"</span>, <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">88</span>);
+	dowork3(p);
+
+
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">return</span> <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">0</span>;
+}
+</code></pre><p><strong>当基类为模板类时的继承方法</strong></p><ul><li>基类如果是模板类, 必须告诉编译器基类中的 T 到底是什么类型, 否则父类不知道用什么类型去初始化数据, 导致编译失败</li></ul><pre><code><span class="h<b>.js</b>-meta" style="border: 0px; vertical-align: baseline; color: rgb(252, 155, 155);">#<span class="h<b>.js</b>-meta-keyword" style="border: 0px; vertical-align: baseline;">include</span><span class="h<b>.js</b>-meta-string" style="border: 0px; vertical-align: baseline;">&lt;string&gt;</span></span>
+<span class="h<b>.js</b>-meta" style="border: 0px; vertical-align: baseline; color: rgb(252, 155, 155);">#<span class="h<b>.js</b>-meta-keyword" style="border: 0px; vertical-align: baseline;">include</span><span class="h<b>.js</b>-meta-string" style="border: 0px; vertical-align: baseline;">&lt;iostream&gt;</span></span>
+<span class="h<b>.js</b>-meta" style="border: 0px; vertical-align: baseline; color: rgb(252, 155, 155);">#<span class="h<b>.js</b>-meta-keyword" style="border: 0px; vertical-align: baseline;">include</span><span class="h<b>.js</b>-meta-string" style="border: 0px; vertical-align: baseline;">&lt;math.h&gt;</span></span>
+<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">using</span> <span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">namespace</span> <span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">std</span>;
+
+<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">template</span>&lt;<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">class</span> t1&gt;
+<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">class</span> base
+{
+<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">public</span>:
+	base()
+	{
+		<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">cout</span> &lt;&lt; <span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">typeid</span>(t1).name() &lt;&lt; <span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">endl</span>;
+	}
+
+	t1 m_A;
+};
+
+<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//指定父类T的类型</span>
+<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">class</span> child1 :<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">public</span> base&lt;<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span>&gt;
+{
+<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">public</span>:
+
+
+};
+
+
+<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//或者再写个类模板, 参数模板化</span>
+<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">template</span>&lt;<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">class</span> t1, <span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">class</span> t2&gt;
+<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">class</span> child2 :<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">public</span> base&lt;t2&gt;
+{
+<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">public</span>:
+	child2()
+	{
+		<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">cout</span> &lt;&lt; <span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">typeid</span>(t1).name() &lt;&lt; <span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">endl</span>;
+	}
+
+	t1 m_B;
+};
+
+
+<span class="h<b>.js</b>-function" style="border: 0px; vertical-align: baseline;"><span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span> <span class="h<b>.js</b>-title" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">main</span><span class="h<b>.js</b>-params" style="border: 0px; vertical-align: baseline;">()</span>
+</span>{
+
+	child2&lt;<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span>,<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span>&gt; c;
+	child1 xx;
+
+
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">return</span> <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">0</span>;
+}
+</code></pre><p><strong>类模板的成员函数类外实现</strong></p><pre><code><span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">template</span>&lt;<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">class</span> t1, <span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">class</span> t2&gt;
+<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">class</span> person
+{
+<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">public</span>:
+person(); <span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//默认构造函数</span>
+<span class="h<b>.js</b>-function" style="border: 0px; vertical-align: baseline;"><span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">void</span> <span class="h<b>.js</b>-title" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">show</span><span class="h<b>.js</b>-params" style="border: 0px; vertical-align: baseline;">()</span></span>; <span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//方法</span>
+
+<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">public</span>:
+t1 name;
+t2 age;
+};
+
+<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">template</span>&lt;<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">class</span> t2, <span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">class</span> t3&gt;
+person&lt;t2,t3&gt;::person()
+{
+
+}
+<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">template</span>&lt;<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">class</span> t2, <span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">class</span> t3&gt;
+<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">void</span> person&lt;t2,t3&gt;::show()
+{
+
+}
+
+<span class="h<b>.js</b>-function" style="border: 0px; vertical-align: baseline;"><span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span> <span class="h<b>.js</b>-title" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">main</span><span class="h<b>.js</b>-params" style="border: 0px; vertical-align: baseline;">()</span>
+</span>{
+person&lt;<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">string</span>,<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span>&gt; p;
+
+<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">return</span> <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">0</span>;
+}</code></pre><p><strong>C++类模板的分文件编写问题以及解决</strong></p><p>一般类的声明与实现都是分文件编写的, 但是类模板不能这样做。</p><p>解决方案</p><ol><li>假设类模板是按照正常的分文件编写, 那么使用时需要引入实现的cpp文件, 而不是头文件。</li><li>不进行分文件编写, 申明和实现都写到同一个文件中并且把文件后缀改为.hpp, 使用时引入hpp即可(推荐此方法)</li></ol><p>hpp是什么意思? 顾名思义就是cpp实现和h头文件混合在一起, 调用时引入hpp即可, 非常适合用来编写公用的开源库。</p><p><strong>类模板碰到友元函数</strong></p><ul><li>友元函数类内进行实现</li></ul><pre><code><span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">template</span>&lt;<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">class</span> t1, <span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">class</span> t2&gt;
+<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">class</span> person
+{
+	<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//友元函数类内实现, showPerson已经是全局函数了</span>
+	<span class="h<b>.js</b>-function" style="border: 0px; vertical-align: baseline;"><span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">friend</span> <span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">void</span> <span class="h<b>.js</b>-title" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">showPerson</span><span class="h<b>.js</b>-params" style="border: 0px; vertical-align: baseline;">(person&lt;t1, t2&gt; &amp;p)</span>
+	</span>{
+		<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">cout</span> &lt;&lt; <span class="h<b>.js</b>-string" style="border: 0px; vertical-align: baseline; color: rgb(162, 252, 162);">"姓名:"</span> &lt;&lt; p.m_name &lt;&lt; <span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">endl</span>;
+		<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">cout</span> &lt;&lt; <span class="h<b>.js</b>-string" style="border: 0px; vertical-align: baseline; color: rgb(162, 252, 162);">"年龄:"</span> &lt;&lt; p.m_age &lt;&lt; <span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">endl</span>;
+	}
+
+<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">public</span>:
+	person(t1 name, t2 age);
+
+<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">private</span>:
+	t1 m_name;
+	t2 m_age;
+};
+
+<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">template</span>&lt;<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">class</span> t1, <span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">class</span> t2&gt;
+person&lt;t1, t2&gt;::person(t1 name, t2 age)
+{
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">this</span>-&gt;m_name = name;
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">this</span>-&gt;m_age = age;
+}
+
+<span class="h<b>.js</b>-function" style="border: 0px; vertical-align: baseline;"><span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span> <span class="h<b>.js</b>-title" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">main</span><span class="h<b>.js</b>-params" style="border: 0px; vertical-align: baseline;">()</span>
+</span>{
+	person&lt;<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">string</span>, <span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span>&gt; p(<span class="h<b>.js</b>-string" style="border: 0px; vertical-align: baseline; color: rgb(162, 252, 162);">"111"</span>, <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">100</span>);
+	showPerson(p);
+}</code></pre><ul><li>友元函数类外进行实现</li></ul><pre><code><span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">template</span>&lt;<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">class</span> nameType, <span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">class</span> ageType&gt; <span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">class</span> person;
+<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">template</span>&lt;<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">typename</span> t1, <span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">typename</span> t2&gt; <span class="h<b>.js</b>-function" style="border: 0px; vertical-align: baseline;"><span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">void</span> <span class="h<b>.js</b>-title" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">showPerson</span><span class="h<b>.js</b>-params" style="border: 0px; vertical-align: baseline;">(person&lt;t1, t2&gt; &amp;p)</span></span>;
+
+<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">template</span>&lt;<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">class</span> nameType, <span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">class</span> ageType&gt; 
+<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">class</span> person
+{
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">friend</span> <span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">void</span> showPerson&lt;&gt;(person&lt;nameType, ageType&gt; &amp;p);
+<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">public</span>:
+	person(nameType name, ageType age);
+<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">private</span>:
+	<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">string</span> m_name;
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span> m_age;
+};
+
+<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">template</span>&lt;<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">class</span> nameType, <span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">class</span> ageType&gt;
+person&lt;nameType, ageType&gt;::person(nameType name, ageType age)
+{
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">this</span>-&gt;m_age = age;
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">this</span>-&gt;m_name = name;
+}
+
+<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">template</span>&lt;<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">typename</span> t1, <span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">typename</span> t2&gt;
+<span class="h<b>.js</b>-function" style="border: 0px; vertical-align: baseline;"><span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">void</span> <span class="h<b>.js</b>-title" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">showPerson</span><span class="h<b>.js</b>-params" style="border: 0px; vertical-align: baseline;">(person&lt;t1, t2&gt; &amp;p)</span>
+</span>{
+	<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">cout</span> &lt;&lt; p.m_age &lt;&lt; <span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">endl</span>;
+	<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">cout</span> &lt;&lt; p.m_name &lt;&lt; <span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">endl</span>;
+}
+
+<span class="h<b>.js</b>-function" style="border: 0px; vertical-align: baseline;"><span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span> <span class="h<b>.js</b>-title" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">main</span><span class="h<b>.js</b>-params" style="border: 0px; vertical-align: baseline;">()</span>
+</span>{
+	person&lt;<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">string</span>, <span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span>&gt; p(<span class="h<b>.js</b>-string" style="border: 0px; vertical-align: baseline; color: rgb(162, 252, 162);">"大猫"</span>, <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">100</span>);
+	showPerson(p);
+
+}</code></pre><p><strong>C++ 类型转换</strong></p><p>静态类型转换 static_cast:</p><pre><code><span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span> a = <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">10</span>;
+<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">double</span> b = <span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">static_cast</span>&lt;<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">double</span>&gt;(a); <span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//将a转换为double类型</span></code></pre><ul><li>使用方式: static_cast&lt;目标类型&gt;(原始数据)</li><li>可以进行基础数据类型转换</li><li>父与子之间的类型转换</li><li>没有父子关系的自定义数据类型是无法进行转换的</li></ul><p>动态类型转换 dynamic_cast:</p><ul><li>使用方式和静态类型转换static_cast 基本一致, 只不过对父类与子类之间的转换要求更为严谨</li><li>允许子类向上转换为父类, 不允许父类向下转换为子类, 除非发生了多态, 当然多态不管是向下类型转换还是向上类型转换总是安全的</li></ul><p>常量类型转换 const_cast:</p><pre><code><span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">const</span> <span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span> *p = <span class="h<b>.js</b>-literal" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">NULL</span>;
+<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span> *newp = <span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">const_cast</span>&lt;<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span>*&gt;(p); <span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//常量指针转为非常量指针</span>
+
+<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span> *p = <span class="h<b>.js</b>-literal" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">NULL</span>;
+<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">const</span> <span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span> *newp2 = <span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">const_cast</span>&lt;<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">const</span> <span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span> *&gt;(p); <span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//非常量指针转为常量指针</span>
+</code></pre><ul><li>不能直接对非指针或非引用的变量使用const_cast</li><li>该运算符用来修改类型的const属性</li><li>常量指针被转化为非常量指针, 并且仍然指向原来的对象</li><li>常量引用被转化为非常量引用, 并且仍然指向原来的对象</li></ul><p>重新解释类型转换 reinterpret_cast:</p><pre><code><span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span> *p = <span class="h<b>.js</b>-literal" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">NULL</span>;
+<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span> a = <span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">reinterpret_cast</span>&lt;<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span>&gt;(p); <span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//将指针转为整数</span>
+<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span> *p1 = <span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">reinterpret_cast</span>&lt;<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span> *&gt;(a);<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//将整数转为指针</span></code></pre><ul><li>主要用于将一种数据类型转换为另一种数据类型, 它可以将一个指针转为一个整数, 也可以将一个整数转为一个指针</li><li>这是最不安全的一种转换机制, 最有可能出问题</li><li>非常鸡肋, 不推荐使用</li></ul><p><strong>C++异常捕获基本使用</strong></p><pre><code><span class="h<b>.js</b>-meta" style="border: 0px; vertical-align: baseline; color: rgb(252, 155, 155);">#<span class="h<b>.js</b>-meta-keyword" style="border: 0px; vertical-align: baseline;">include</span> <span class="h<b>.js</b>-meta-string" style="border: 0px; vertical-align: baseline;">&lt;iostream&gt;</span></span>
+<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">using</span> <span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">namespace</span> <span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">std</span>;
+
+<span class="h<b>.js</b>-function" style="border: 0px; vertical-align: baseline;"><span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span> <span class="h<b>.js</b>-title" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">func</span><span class="h<b>.js</b>-params" style="border: 0px; vertical-align: baseline;">(<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span> a, <span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span> b)</span>
+</span>{
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">if</span> (b == <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">0</span>)
+	{
+		<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">throw</span> <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">-1</span>; <span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//抛出异常, 谁调用谁处理, -1是int类型的异常</span>
+	}
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">return</span> a / b;
+}
+
+<span class="h<b>.js</b>-function" style="border: 0px; vertical-align: baseline;"><span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span> <span class="h<b>.js</b>-title" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">main</span><span class="h<b>.js</b>-params" style="border: 0px; vertical-align: baseline;">()</span>
+</span>{
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">try</span> <span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//try翻译是尝试的意思</span>
+	{
+		<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">cout</span> &lt;&lt; func(<span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">10</span>, <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">0</span>) &lt;&lt; <span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">endl</span>; <span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//尝试执行</span>
+	}
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">catch</span> (<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span>) <span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//当func中使用throw抛出int类型异常时, catch捕捉int类型异常</span>
+	{
+		<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">cout</span> &lt;&lt; <span class="h<b>.js</b>-string" style="border: 0px; vertical-align: baseline; color: rgb(162, 252, 162);">"main捕捉到int类型异常"</span> &lt;&lt; <span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">endl</span>; <span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//func中抛出的int异常</span>
+	}
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">catch</span> (...) <span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//捕捉其他异常</span>
+	{
+		<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">cout</span> &lt;&lt; <span class="h<b>.js</b>-string" style="border: 0px; vertical-align: baseline; color: rgb(162, 252, 162);">"其他异常..."</span> &lt;&lt; <span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">endl</span>; <span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//抛出了其他异常</span>
+	}
+}</code></pre><ul><li>try 尝试执行 try{} 中的内容</li><li>try下面的catch 捕获异常</li><li>catch(异常类型)</li><li>catch(…) 代表捕获其他类型的异常</li><li>如果没有任何处理异常的地方, 那么会调用terminate函数中断程序</li></ul><p>假设不想处理异常, 而是继续往上抛出, 该怎么做?</p><pre><code><span class="h<b>.js</b>-meta" style="border: 0px; vertical-align: baseline; color: rgb(252, 155, 155);">#<span class="h<b>.js</b>-meta-keyword" style="border: 0px; vertical-align: baseline;">include</span> <span class="h<b>.js</b>-meta-string" style="border: 0px; vertical-align: baseline;">&lt;iostream&gt;</span></span>
+<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">using</span> <span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">namespace</span> <span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">std</span>;
+
+<span class="h<b>.js</b>-function" style="border: 0px; vertical-align: baseline;"><span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span> <span class="h<b>.js</b>-title" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">func</span><span class="h<b>.js</b>-params" style="border: 0px; vertical-align: baseline;">(<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span> a, <span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span> b)</span>
+</span>{
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">if</span> (b == <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">0</span>)
+	{
+		<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">throw</span> <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">-1</span>; <span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//抛出异常, 谁调用谁处理, -1是int类型的异常</span>
+	}
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">return</span> a / b;
+}
+
+<span class="h<b>.js</b>-function" style="border: 0px; vertical-align: baseline;"><span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">void</span> <span class="h<b>.js</b>-title" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">test</span><span class="h<b>.js</b>-params" style="border: 0px; vertical-align: baseline;">()</span>
+</span>{
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">try</span> <span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//try翻译是尝试的意思</span>
+	{
+		<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">cout</span> &lt;&lt; func(<span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">10</span>, <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">0</span>) &lt;&lt; <span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">endl</span>; <span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//尝试执行</span>
+	}
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">catch</span> (<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span>) <span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//捕捉int类型异常</span>
+	{
+		<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">throw</span>; <span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//test中并不想处理func中的异常, 而是继续往上抛出, 让main函数中的异常捕获去处理</span>
+
+		<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//cout &lt;&lt; "test捕捉到int类型异常" &lt;&lt; endl; //func中抛出的int异常</span>
+	}
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">catch</span> (...) <span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//捕捉其他异常</span>
+	{
+		<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">cout</span> &lt;&lt; <span class="h<b>.js</b>-string" style="border: 0px; vertical-align: baseline; color: rgb(162, 252, 162);">"其他异常..."</span> &lt;&lt; <span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">endl</span>; <span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//抛出了其他异常</span>
+	}
+}
+
+<span class="h<b>.js</b>-function" style="border: 0px; vertical-align: baseline;"><span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span> <span class="h<b>.js</b>-title" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">main</span><span class="h<b>.js</b>-params" style="border: 0px; vertical-align: baseline;">()</span>
+</span>{
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">try</span>
+	{
+		test();
+	}
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">catch</span> (<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span>)
+	{
+		<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">cout</span> &lt;&lt; <span class="h<b>.js</b>-string" style="border: 0px; vertical-align: baseline; color: rgb(162, 252, 162);">"mian捕获int类型异常"</span> &lt;&lt; <span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">endl</span>;
+	}
+}</code></pre><p>抛出自定义异常类:</p><pre><code><span class="h<b>.js</b>-meta" style="border: 0px; vertical-align: baseline; color: rgb(252, 155, 155);">#<span class="h<b>.js</b>-meta-keyword" style="border: 0px; vertical-align: baseline;">include</span> <span class="h<b>.js</b>-meta-string" style="border: 0px; vertical-align: baseline;">&lt;iostream&gt;</span></span>
+<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">using</span> <span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">namespace</span> <span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">std</span>;
+
+<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">class</span> myExceprion <span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//自定义异常类</span>
+{
+<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">public</span>:
+	<span class="h<b>.js</b>-function" style="border: 0px; vertical-align: baseline;"><span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">void</span> <span class="h<b>.js</b>-title" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">printErro</span><span class="h<b>.js</b>-params" style="border: 0px; vertical-align: baseline;">()</span>
+	</span>{
+		<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">cout</span> &lt;&lt; <span class="h<b>.js</b>-string" style="border: 0px; vertical-align: baseline; color: rgb(162, 252, 162);">"自定义异常类"</span> &lt;&lt; <span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">endl</span>;
+	}
+	myExceprion() {};
+	myExceprion(<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">const</span> myExceprion&amp;e)
+	{
+		<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">cout</span> &lt;&lt; <span class="h<b>.js</b>-string" style="border: 0px; vertical-align: baseline; color: rgb(162, 252, 162);">"copy"</span> &lt;&lt; <span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">endl</span>;
+	}
+
+};
+
+<span class="h<b>.js</b>-function" style="border: 0px; vertical-align: baseline;"><span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">void</span> <span class="h<b>.js</b>-title" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">func</span><span class="h<b>.js</b>-params" style="border: 0px; vertical-align: baseline;">()</span>
+</span>{
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">throw</span> myExceprion(); <span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//抛出自定义异常类</span>
+}
+
+<span class="h<b>.js</b>-function" style="border: 0px; vertical-align: baseline;"><span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span> <span class="h<b>.js</b>-title" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">main</span><span class="h<b>.js</b>-params" style="border: 0px; vertical-align: baseline;">()</span>
+</span>{
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">try</span>
+	{
+		func();
+	}
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">catch</span> (myExceprion e)
+	{
+		e.printErro();
+	}
+}</code></pre><p><strong>栈解旋</strong></p><pre><code><span class="h<b>.js</b>-meta" style="border: 0px; vertical-align: baseline; color: rgb(252, 155, 155);">#<span class="h<b>.js</b>-meta-keyword" style="border: 0px; vertical-align: baseline;">include</span> <span class="h<b>.js</b>-meta-string" style="border: 0px; vertical-align: baseline;">&lt;iostream&gt;</span></span>
+<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">using</span> <span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">namespace</span> <span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">std</span>;
+
+<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">class</span> myExceprion <span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//自定义异常类</span>
+{
+<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">public</span>:
+	<span class="h<b>.js</b>-function" style="border: 0px; vertical-align: baseline;"><span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">void</span> <span class="h<b>.js</b>-title" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">printErro</span><span class="h<b>.js</b>-params" style="border: 0px; vertical-align: baseline;">()</span>
+	</span>{
+		<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">cout</span> &lt;&lt; <span class="h<b>.js</b>-string" style="border: 0px; vertical-align: baseline; color: rgb(162, 252, 162);">"自定义异常类"</span> &lt;&lt; <span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">endl</span>;
+	}
+	myExceprion() {};
+	myExceprion(<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">const</span> myExceprion&amp;e)
+	{
+		<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">cout</span> &lt;&lt; <span class="h<b>.js</b>-string" style="border: 0px; vertical-align: baseline; color: rgb(162, 252, 162);">"copy"</span> &lt;&lt; <span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">endl</span>;
+	}
+
+};
+
+<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">class</span> person
+{
+<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">public</span>:
+	person()
+	{
+		<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">cout</span> &lt;&lt; <span class="h<b>.js</b>-string" style="border: 0px; vertical-align: baseline; color: rgb(162, 252, 162);">"person构造"</span> &lt;&lt; <span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">endl</span>;
+	}
+	~person()
+	{
+		<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">cout</span> &lt;&lt; <span class="h<b>.js</b>-string" style="border: 0px; vertical-align: baseline; color: rgb(162, 252, 162);">"person析构"</span> &lt;&lt; <span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">endl</span>;
+	}
+};
+
+<span class="h<b>.js</b>-function" style="border: 0px; vertical-align: baseline;"><span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">void</span> <span class="h<b>.js</b>-title" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">func</span><span class="h<b>.js</b>-params" style="border: 0px; vertical-align: baseline;">()</span>
+</span>{
+
+	<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//栈解旋</span>
+	<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//从try开始到throw抛出异常之后, 所有的栈上对象都会被释放掉, 这个过程称为栈解旋</span>
+	<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//构造和析构顺序相反</span>
+	person p1;
+	person p2;
+
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">throw</span> myExceprion(); <span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//抛出自定义异常类</span>
+}
+
+<span class="h<b>.js</b>-function" style="border: 0px; vertical-align: baseline;"><span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span> <span class="h<b>.js</b>-title" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">main</span><span class="h<b>.js</b>-params" style="border: 0px; vertical-align: baseline;">()</span>
+</span>{
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">try</span>
+	{
+		func();
+	}
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">catch</span> (myExceprion e)
+	{
+		e.printErro();
+	}
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">return</span> <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">0</span>;
+}</code></pre><ul><li>从try开始到throw抛出异常之后, throw前所有的栈上对象都会被释放掉, 这个过程称为栈解旋</li><li>个人理解, 其实就是离开了作用域对象从而自动释放了? 也就是说throw相当于return出函数?</li></ul><p><strong>异常的接口声明</strong></p><pre><code><span class="h<b>.js</b>-meta" style="border: 0px; vertical-align: baseline; color: rgb(252, 155, 155);">#<span class="h<b>.js</b>-meta-keyword" style="border: 0px; vertical-align: baseline;">include</span><span class="h<b>.js</b>-meta-string" style="border: 0px; vertical-align: baseline;">&lt;iostream&gt;</span></span>
+<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">using</span> <span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">namespace</span> <span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">std</span>;
+
+<span class="h<b>.js</b>-function" style="border: 0px; vertical-align: baseline;"><span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">void</span> <span class="h<b>.js</b>-title" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">func</span><span class="h<b>.js</b>-params" style="border: 0px; vertical-align: baseline;">()</span> <span class="h<b>.js</b>-title" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">throw</span><span class="h<b>.js</b>-params" style="border: 0px; vertical-align: baseline;">(<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span>)</span>  <span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//throw(int) 代表只允许抛出int类型异常, 抛出不属于int类型异常时会崩溃</span>
+</span>{
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">throw</span> <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">1</span>;
+}
+<span class="h<b>.js</b>-function" style="border: 0px; vertical-align: baseline;"><span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">void</span> <span class="h<b>.js</b>-title" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">func1</span><span class="h<b>.js</b>-params" style="border: 0px; vertical-align: baseline;">()</span> <span class="h<b>.js</b>-title" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">throw</span><span class="h<b>.js</b>-params" style="border: 0px; vertical-align: baseline;">(<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span>, <span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">char</span>, <span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">double</span>)</span> <span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//规定只能抛出int,char, double 这几种类型</span>
+</span>{
+        <span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">throw</span> <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">3.14</span>;
+}
+<span class="h<b>.js</b>-function" style="border: 0px; vertical-align: baseline;"><span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">void</span> <span class="h<b>.js</b>-title" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">func2</span><span class="h<b>.js</b>-params" style="border: 0px; vertical-align: baseline;">()</span> <span class="h<b>.js</b>-title" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">throw</span><span class="h<b>.js</b>-params" style="border: 0px; vertical-align: baseline;">()</span>  <span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//throw() 不允许抛出任何异常, 违反规定程序崩溃</span>
+</span>{
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">throw</span> <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">1</span>; <span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//崩溃</span>
+}
+
+<span class="h<b>.js</b>-function" style="border: 0px; vertical-align: baseline;"><span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span> <span class="h<b>.js</b>-title" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">main</span><span class="h<b>.js</b>-params" style="border: 0px; vertical-align: baseline;">()</span>
+</span>{
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">try</span>
+	{
+		<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//func();</span>
+		func2();
+	}
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">catch</span>(<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span>)
+	{
+		<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">cout</span>&lt;&lt;<span class="h<b>.js</b>-string" style="border: 0px; vertical-align: baseline; color: rgb(162, 252, 162);">"int 类型异常捕获.."</span>&lt;&lt;<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">endl</span>;
+	}
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">catch</span>(...)
+	{
+		<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">cout</span>&lt;&lt;<span class="h<b>.js</b>-string" style="border: 0px; vertical-align: baseline; color: rgb(162, 252, 162);">"其他类型异常捕获.."</span>&lt;&lt;<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">endl</span>;
+	}
+	
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">return</span> <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">0</span>;
+}</code></pre><ul><li>如果只想抛出特定类型的异常, 可以使用异常的接口申明</li><li>使用方式: ” void func() throw(xx) 或 throw()”</li><li>异常接口声明指定多种类型 ” void func() throw(xx类型, xx类型, xx类型)”</li><li>声明后, 程序就只能抛出特定异常了, 要是抛出其他异常程序会立马崩溃</li><li>需要注意的是, 异常接口申明在vs编译器上是不支持的, 而gcc编译器上可以</li></ul><p><strong>异常变量的生命周期</strong></p><pre><code><span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">using</span> <span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">namespace</span> <span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">std</span>;
+<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">class</span> human
+{
+<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">public</span>:
+	<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//human(const char *in_erro) :erro(in_erro) {}</span>
+	<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//void print_erro(){cout &lt;&lt; "erro: "&lt;&lt; erro &lt;&lt; endl;}</span>
+	human()
+	{
+		<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">cout</span> &lt;&lt; <span class="h<b>.js</b>-string" style="border: 0px; vertical-align: baseline; color: rgb(162, 252, 162);">"默认构造"</span> &lt;&lt; <span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">endl</span>;
+	}
+	~human()
+	{
+		<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">cout</span> &lt;&lt; <span class="h<b>.js</b>-string" style="border: 0px; vertical-align: baseline; color: rgb(162, 252, 162);">"默认析构"</span> &lt;&lt; <span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">endl</span>;
+	}
+	human(<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">const</span> human&amp;h)
+	{
+		<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">cout</span> &lt;&lt; <span class="h<b>.js</b>-string" style="border: 0px; vertical-align: baseline; color: rgb(162, 252, 162);">"拷贝构造"</span> &lt;&lt; <span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">endl</span>;
+	}
+
+<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">private</span>:
+	<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//const char *erro;</span>
+};
+
+<span class="h<b>.js</b>-function" style="border: 0px; vertical-align: baseline;"><span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">void</span> <span class="h<b>.js</b>-title" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">func</span><span class="h<b>.js</b>-params" style="border: 0px; vertical-align: baseline;">()</span>
+</span>{
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">throw</span> human();
+}
+
+<span class="h<b>.js</b>-function" style="border: 0px; vertical-align: baseline;"><span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span> <span class="h<b>.js</b>-title" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">main</span><span class="h<b>.js</b>-params" style="border: 0px; vertical-align: baseline;">()</span>
+</span>{
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">try</span> {
+		func();
+	}
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">catch</span> (human e)
+	{
+		<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">cout</span> &lt;&lt; <span class="h<b>.js</b>-string" style="border: 0px; vertical-align: baseline; color: rgb(162, 252, 162);">"捕获异常"</span> &lt;&lt; <span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">endl</span>;
+		<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//e.print_erro();</span>
+	}
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">catch</span> (...)
+	{
+		<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">cout</span> &lt;&lt; <span class="h<b>.js</b>-string" style="border: 0px; vertical-align: baseline; color: rgb(162, 252, 162);">"其他错误!"</span> &lt;&lt; <span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">endl</span>;
+	}
+
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">return</span> <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">0</span>;
+}</code></pre><p>执行输出:</p><pre><code>默认构造
+拷贝构造
+捕获异常
+默认析构
+默认析构</code></pre><p>可以看到异常变量对象的析构居然是在捕获异常后才被调用, 说明在异常输出之前对象还没被析构, 那么就可以把捕获异常处改为引用方式, 这样一来就减少了不必要的拷贝并且提高了效率。</p><pre><code><span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">catch</span> (human &amp;e)
+	{
+		<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">cout</span> &lt;&lt; <span class="h<b>.js</b>-string" style="border: 0px; vertical-align: baseline; color: rgb(162, 252, 162);">"捕获异常"</span> &lt;&lt; <span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">endl</span>;
+		<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//e.print_erro();</span>
+	}</code></pre><p>更改后的程序输出:</p><pre><code>默认构造
+捕获异常
+默认析构</code></pre><p><strong>C++标准输入输出流</strong></p><p>标准输入流:</p><pre><code><span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">char</span> buf[<span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">1024</span>];
+<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span> x = <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">3</span>;
+
+<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">cin</span>.get(); <span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//从缓冲区中读取一个字符</span>
+<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">cin</span>.get(buf, <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">1024</span>);<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//从缓冲区读取字符串, 但不包括换行</span>
+<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">cin</span>.getline(buf, <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">1024</span>);<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//从缓冲区读取字符串包括换行, 但是会把换行扔掉</span>
+<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">cin</span>.ignore(x); <span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//忽略x个字符, 目前x=3, 那么输入123最后缓冲区只有一个换行 </span>
+<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">cin</span>.peek();<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//偷看一个字符然后放回缓冲区</span>
+<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">cin</span>.putback(<span class="h<b>.js</b>-string" style="border: 0px; vertical-align: baseline; color: rgb(162, 252, 162);">'c'</span>);<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//将指定字符放回缓冲区</span>
+<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">cin</span>.clear();<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//重置标志位</span>
+<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">cin</span>.sync();<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//清空缓冲区</span>
+<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">cin</span>.fail();<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//读取当前标志位</span></code></pre><p>标准输出流:</p><pre><code><span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span> number = <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">99</span>;
+<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">cout</span>.width(<span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">20</span>);<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//输出的字符串宽度为4，不足的会用空格补足</span>
+<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">cout</span>.fill(<span class="h<b>.js</b>-string" style="border: 0px; vertical-align: baseline; color: rgb(162, 252, 162);">'*'</span>);<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//填充*</span>
+<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">cout</span>.setf(ios::left);<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//设置格式, 输入内容左对齐</span>
+<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">cout</span>.unsetf(ios::dec);<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//卸载十进制格式</span>
+<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">cout</span>.setf(ios::hex);<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//安装十六进制格式</span>
+<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">cout</span>.setf(ios::showbase);<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//强制输出整数基数  0, 0x</span>
+<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">cout</span>.unsetf(ios::hex);<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//卸载十六进制;</span>
+<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">cout</span>.setf(ios::dec);<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//安装十进制</span>
+
+<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">cout</span> &lt;&lt; <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">99</span>&lt;&lt; <span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">endl</span>;</code></pre>

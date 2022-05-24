@@ -1,0 +1,9 @@
+<h4>unicode Encode</h4>
+<textarea style="width: 99%;height: 90px;" placeholder="请输入源文本" oninput="getbyid('y106').value=unicode(this.value);"></textarea>
+
+<textarea  readonly="readonly" id="y106" style="width: 99%;height: 120px;" placeholder="这里显示unicode编码,点击可复制到剪辑板。" onclick="copyhandle(this.value,'yes')"></textarea>
+
+<h4>unicode Decode</h4>
+<textarea style="width: 99%;height: 120px;" placeholder="这里输入unicode编码" oninput="getbyid('y107').value=nounicode(this.value);"></textarea>
+
+<textarea  readonly="readonly" id="y107" style="width: 99%;height: 90px;" placeholder="这里显示解密后的内容,点击可复制到剪辑板。" onclick="copyhandle(this.value,'yes')"></textarea>

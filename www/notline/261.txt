@@ -1,0 +1,72 @@
+<p><strong><br></strong></p><h1>C/C++ 使用SetWindowsHookEx 设置全局键盘钩子</h1><p><strong><br></strong></p><p><strong>DLL方式</strong>：</p><p>SetWindowsHookEx 设置全局低级键盘钩子屏蔽所有键盘消息, 除了”ctrl+alt+.” 屏蔽不到之外, 其他按键消息都是可以屏蔽到的, 然后呢hook代码写在了dll中, 弄这程序主要目的就是为了防止误触键盘。</p><p>其实WH_KEYBOARD_LL类型低级键盘钩子不用写在dll中的</p><p>放张效果图:</p><p><img src="https://66-1251737204.cos.ap-beijing-1.myqcloud.com/citext.cn/hook1.png" alt=""></p><p>这两个工程文件我都打包好咯, 编译环境是vs2015， 下载地址: <a href="https://pan.baidu.com/s/1P8g-OekVJZMEXWti0SQoNA" rel="nofollow">https://pan.baidu.com/s/1P8g-OekVJZMEXWti0SQoNA</a> 提取码：qctm</p><p><strong>非DLL方式</strong>：</p><p>另外再附上不采用DLL方式的全局键盘钩子代码, 先放张效果图, 代码在后边哦。</p><p><img src="https://66-1251737204.cos.ap-beijing-1.myqcloud.com/citext.cn/images/20201030/QQ%E6%88%AA%E5%9B%BE20201030124920.png" alt=""></p><pre><code class="lang-c++"><span class="h<b>.js</b>-meta" style="border: 0px; vertical-align: baseline; color: rgb(252, 155, 155);">#<span class="h<b>.js</b>-meta-keyword" style="border: 0px; vertical-align: baseline;">include</span><span class="h<b>.js</b>-meta-string" style="border: 0px; vertical-align: baseline;">&lt;Windows.h&gt;</span></span>
+<span class="h<b>.js</b>-meta" style="border: 0px; vertical-align: baseline; color: rgb(252, 155, 155);">#<span class="h<b>.js</b>-meta-keyword" style="border: 0px; vertical-align: baseline;">include</span><span class="h<b>.js</b>-meta-string" style="border: 0px; vertical-align: baseline;">&lt;iostream&gt;</span></span>
+
+<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">std</span>::<span class="h<b>.js</b>-function" style="border: 0px; vertical-align: baseline;"><span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">string</span> <span class="h<b>.js</b>-title" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">get_time</span><span class="h<b>.js</b>-params" style="border: 0px; vertical-align: baseline;">()</span>
+</span>{
+	SYSTEMTIME sys;
+	GetLocalTime(&amp;sys);
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">char</span> time[<span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">1024</span>] = { <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">0</span> };
+	<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">sprintf</span>(time, <span class="h<b>.js</b>-string" style="border: 0px; vertical-align: baseline; color: rgb(162, 252, 162);">"[%4d/%02d/%02d %02d:%02d:%02d]"</span>, sys.wYear, sys.wMonth, sys.wDay, sys.wHour, sys.wMinute, sys.wSecond);
+
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">return</span> <span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">std</span>::<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">string</span>(time);
+}
+
+<span class="h<b>.js</b>-function" style="border: 0px; vertical-align: baseline;">LRESULT CALLBACK <span class="h<b>.js</b>-title" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">KeyboardProc</span><span class="h<b>.js</b>-params" style="border: 0px; vertical-align: baseline;">(<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span> nCode, WPARAM wParam, LPARAM lParam)</span>
+</span>{
+	<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">/*
+	typedef struct tagKBDLLHOOKSTRUCT {
+	DWORD     vkCode;		// 按键代号
+	DWORD     scanCode;		// 硬件扫描代号，同 vkCode 也可以作为按键的代号。
+	DWORD     flags;		// 事件类型，一般按键按下为 0 抬起为 128。
+	DWORD     time;			// 消息时间戳
+	ULONG_PTR dwExtraInfo;	// 消息附加信息，一般为 0。
+	}KBDLLHOOKSTRUCT,*LPKBDLLHOOKSTRUCT,*PKBDLLHOOKSTRUCT;
+	*/</span>
+	KBDLLHOOKSTRUCT *ks = (KBDLLHOOKSTRUCT*)lParam;		<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">// 包含低级键盘输入事件信息</span>
+
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">char</span> data[<span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">1024</span>];
+	DWORD code = ks-&gt;vkCode;
+
+	<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">std</span>::<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">string</span> t = get_time();
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">char</span> state[<span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">20</span>];
+
+
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">if</span> (wParam == WM_KEYDOWN)
+	{
+		<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">strcpy</span>(state, <span class="h<b>.js</b>-string" style="border: 0px; vertical-align: baseline; color: rgb(162, 252, 162);">"按下"</span>);
+	}
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">else</span> <span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">if</span> (wParam == WM_KEYUP)
+	{
+		<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">strcpy</span>(state, <span class="h<b>.js</b>-string" style="border: 0px; vertical-align: baseline; color: rgb(162, 252, 162);">"放开"</span>);
+	}
+
+	<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">sprintf</span>(data, <span class="h<b>.js</b>-string" style="border: 0px; vertical-align: baseline; color: rgb(162, 252, 162);">"%s 键代码:%d %s"</span>, t.c_str(), code, state);
+
+	<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">std</span>::<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">cout</span> &lt;&lt; data &lt;&lt; <span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">std</span>::<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">endl</span>;
+
+
+			 <span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">// 将消息传递给钩子链中的下一个钩子</span>
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">return</span> CallNextHookEx(<span class="h<b>.js</b>-literal" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">NULL</span>, nCode, wParam, lParam);
+}
+
+<span class="h<b>.js</b>-function" style="border: 0px; vertical-align: baseline;"><span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span> <span class="h<b>.js</b>-title" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">main</span><span class="h<b>.js</b>-params" style="border: 0px; vertical-align: baseline;">()</span>
+</span>{
+	HINSTANCE hInst = GetModuleHandle(<span class="h<b>.js</b>-literal" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">NULL</span>);
+	HHOOK g_Hook = SetWindowsHookEx(WH_KEYBOARD_LL, KeyboardProc, hInst, <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">0</span>);
+
+	<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">// 消息循环是必须的，Windows直接在你自己的进程中调用你的hook回调.要做这个工作,</span>
+	<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//需要一个消息循环.没有其他机制可以让您的主线程进行回调,</span>
+	<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//回调只能在您调用Get / PeekMessage()以使Windows可以控制时发生.</span>
+
+	MSG msg;
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">while</span> (GetMessage(&amp;msg, <span class="h<b>.js</b>-literal" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">NULL</span>, <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">0</span>, <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">0</span>))
+	{
+		TranslateMessage(&amp;msg);
+		DispatchMessage(&amp;msg);
+	}
+
+	UnhookWindowsHookEx(g_Hook);
+
+    <span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">return</span> <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">0</span>;
+}
+<div><br></div></code></pre>

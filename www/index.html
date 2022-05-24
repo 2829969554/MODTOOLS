@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>万能工具箱-最好的工具箱~</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+	<meta name="apple-mobile-web-app-capable" content="yes"/>
+	<meta name="author" content="Quiet Blog & 一个安静的工具箱~MOD万能工具箱-最好的工具箱~"/>
+	<meta name="msapplication-TileColor" content="#3ac19f"/>
+	<!-- 请将站点icon和图表放到站点根目录 -->
+	<link rel="shortcut icon" type="image/ico" href="/favicon.ico" />
+	<meta name="msapplication-TileImage" content="/icon.png"/>
+	<meta name="apple-mobile-web-app-title" content="MOD万能工具箱-最好的工具箱~">
+	<meta name="Keywords" content="MOD万能工具箱-最好的工具箱~"/>
+	<meta name="Description" content="MOD万能工具箱-最好的工具箱~Quiet Blog & 一个安静的工具箱~MOD TOOLs"/>
+	<link rel="stylesheet" href="static/css/style.css">
+	<link rel="stylesheet" href="static/css/iconfont.css">
+	        <style>
+        .black_overlay{
+            display: none;
+            position: absolute;
+            top: 0%;
+            left: 0%;
+            width: 100%;
+            height: 100%;
+            background-color: black;
+            z-index:1001;
+            -moz-opacity: 0.8;
+            opacity:.80;
+            filter: alpha(opacity=88);
+        }
+        .white_content {
+            display: none;
+            position: absolute;
+            top: 2%;
+            left: 2%;
+            width: 85%;
+            height: 85%;
+            padding: 20px;
+            border: 1px solid orange;
+            background-color: white;
+            z-index:1002;
+            overflow: auto;
+        }
+    </style>
+	</head>
+<body>
+<header>
+<div class="main">
+	<div class="intro">
+		<!-- 调用后台上传的头像，请到后台上传 -->
+		<img src="static/picture/head.jpg" class="intro-logo"/>
+		<span class="intro-sitename"><a href="/">MOD 工具箱		</a></span>
+		<span class="intro-siteinfo">工欲善其事,必先利其器。	</span>
+		<span class="social">
+		<!-- 
+			联系方式中不需要的链接可直接删除
+		-->
+		<!-- 调用QQ链接，请到 http://shang.qq.com/ 申请-->
+		<a onclick="plus.runtime.openURL('http://wpa.qq.com/msgrd?v=3&uin=2829969554&site=qq&menu=yes');"><i class="iconfont icon-qq"></i></a>
+		<!-- 邮箱链接，格式:mailto:mail@mail.com -->
+		<a href="mailto:2829969554@qq.com" target="_blank"><i class="iconfont icon-mail"></i></a>
+		<!-- 微博链接,格式:https://www.weibo.com/weiboid -->
+		<a onclick="plus.runtime.openURL('http://2829969554.3vdo.net/');"  ><i class="iconfont icon-weibo"></i></a>
+		<!-- GitHub链接，格式:https://www.github.com/yourid -->
+		<a onclick="plus.runtime.openURL('https://www.github.com/2829969554/');"  ><i class="iconfont icon-github"></i></a>
+		<!-- Coding链接，格式:https://coding.net/u/yourid -->
+		<a href="#" target="_blank"><i class="iconfont icon-coding"></i></a>
+		</span>
+	</div>
+
+</div>
+
+</header>
+    <p style="width: 100%;background-color: yellow;text-align: center;display: none;" id='vertixing'></p>
+<content>
+<div class="main">
+
+		<div id="bloglist">
+		<div class="article">
+			<div class="article-title">
+				<a href="info.html?id={id}" >{title}</a>
+			</div>
+			<small class="article-time"><b>{notes} </b><span class="baiduapi" title="info.html?id={id}"></span></small>
+
+		</div>
+		</div>
+				
+		
+		<div class="page-url">
+	</div>
+	<div class="pagination">
+			</div>
+				</div>
+	</content>
+	
+	<br>
+	
+	<footer>
+        <div class="intro clearfix">
+            <div class="fl">
+                <p>
+
+                    如果有侵权内容、不妥之处，不胜荣幸。
+                    <br>
+                    <a href="#">大家有什么需求功能请联系我反馈。</a>
+                    <br>&copy; 2022 MOD工具箱                </p>
+            </div>
+            <div class="fr">
+                <a rel="external nofollow" href="readme.html"
+                    class="qq">服务协议与隐私政策</a>
+      
+            </div>
+        </div>
+	</footer>
+	<div class="toTop">TOP</div>
+
+
+<script src="static/js/lib.js"></script>
+<script src="static/js/index.js"></script>
+<script src="https://eqcn.ajz.miesnfu.com/wp-content/plugins/wp-3d-pony/live2dw/lib/L2Dwidget.min.js"></script>
+<script>
+
+document.addEventListener('plusready', function () {
+          var first = null;
+          var webview = plus.webview.currentWebview();
+          plus.key.addEventListener('backbutton', function () {
+              webview.canBack(function (e) {
+                  if (e.canBack) {
+                    webview.back(); //这里不建议修改自己跳转的路径  
+                  } else {
+                    //首次按键，提示‘再按一次退出应用’  
+                    if (!first) {
+                      first = new Date().getTime(); //获取第一次点击的时间戳  
+                      plus.nativeUI.toast("再按一次退出应用", {
+                        duration: 'short'
+                      }); //通过H5+ API 调用Android 上的toast 提示框  
+                      setTimeout(function () {
+                        first = null;
+                      }, 1000);
+                    } else {
+                        // 获取第二次点击的时间戳, 两次之差 小于 1000ms 说明1s点击了两次, 
+                      if (new Date().getTime() - first < 1000) {  
+                        plus.runtime.quit(); //退出应用  
+              }
+            }
+          }
+        })
+      });
+    });
+	
+</script>
+
+<script>
+
+
+
+if (/AppleWebKit.*Mobile/i.test(navigator.userAgent) || /Android/i.test(navigator.userAgent) || /BlackBerry/i.test(navigator.userAgent) || /IEMobile/i.test(navigator.userAgent) || (/MIDP|SymbianOS|NOKIA|SAMSUNG|LG|NEC|TCL|Alcatel|BIRD|DBTEL|Dopod|PHILIPS|HAIER|LENOVO|MOT-|Nokia|SonyEricsson|SIE-|Amoi|ZTE/.test(navigator.userAgent))) { 
+    if (/iPad/i.test(navigator.userAgent)) { 
+         
+    }
+} else { 
+
+L2Dwidget.init({
+        "model": {
+            jsonPath: "https://unpkg.com/live2d-widget-model-koharu@1.0.5/assets/koharu.model.json",
+            "scale": 1
+        },
+        "display": {
+            "position": "left", //看板娘的表现位置
+            "width": 100,  //小萝莉的宽度
+            "height": 200, //小萝莉的高度
+            "hOffset": 0,//小萝莉的X偏移量
+            "vOffset": -20//小萝莉的Y偏移量
+        },
+        "mobile": {
+            "show": true,
+            "scale": 0.1
+        },
+        "react": {
+            "opacityDefault": 0.7,//小萝莉的透明度
+            "opacityOnHover": 0.2
+        }
+    });
+
+
+    
+}
+</script>
+
+        <div id="fade" class="black_overlay"></div>
+        <script type="text/javascript">
+        	
+        	if(romget('gzs')==null  || romget('gzs') != 'yes'){
+        		document.getElementById('light').style.display='block';
+        		document.getElementById('fade').style.display='block';
+        	}
+
+
+//代码更新需要修改这里
+var vers=3;
+
+
+//http://2829969554.3vdo.net/version.js
+var b = httpget('http://2829969554.3vdo.net/version.js',{'time':1});
+if(b>vers){
+//alert(1);需要更新
+getbyid('vertixing').innerHTML='当前版本:'+vers+' 最新版本:'+b+' 请尽快更新以获取新功能~';
+getbyid('vertixing').style.display='';
+}
+        </script>
+
+</body>
+</html>

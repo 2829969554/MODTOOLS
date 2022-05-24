@@ -1,0 +1,16 @@
+<h4>VIP电影解析工具</h4>
+<h6>支持优酷、爱奇艺、腾讯视频的等</h6>
+<textarea id='y106' style="width: 99%;height: 120px;" placeholder="请把对应视频的链接复制到此处。电视剧请复制对应剧集的连接！"></textarea>
+
+<p><a style="font-size:20px;" onclick="var reg= /(https?|http|ftp|file):\/\/[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]/g;getbyid('iframe111').src='https://api.okjx.cc:3389/jx.php?url='+getbyid('y106').value.match(reg);">开始播放</a>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a style="font-size:20px;" onclick="var reg= /(https?|http|ftp|file):\/\/[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]/g;getbyid('iframe111').src='';getbyid('y106').value='';">一键清除</a>
+
+</p>
+
+<br/>
+<iframe width="99%" id='iframe111' height="300px;" allowTransparency="true" frameborder="0" scrolling="no" allowfullscreen="true" src="" autoPlay='true' ></iframe>
+<!--
+https://api.okjx.cc:3389/jx.php?url=https://v.qq.com/x/cover/mzc00200ale9ai5.html?sf=uri
+https://api.okjx.cc:3389/jx.php?url=https://v.qq.com/x/cover/m441e3rjq9kwpsc/v00395z8ezr.html
+-->

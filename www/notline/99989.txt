@@ -1,0 +1,6 @@
+<h4>二进制图片转Base64</h4>
+<input type="file" id="imgfile" class="btn btn-primary" onchange="filebase64run(this,function(a){getbyid('y106').value=a;getbyid('yulan').src=a;});">
+<br/><br/>
+
+<textarea  readonly="readonly" id="y106" style="width: 99%;height: 280px;" placeholder="这里显示base64图片编码,点击可复制到剪辑板。" onclick="copyhandle(this.value,'yes')"></textarea>
+<img id='yulan' src=''/>

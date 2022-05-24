@@ -1,0 +1,6 @@
+<h4>URL网址16进制加密工具</h4>
+
+<textarea style="width: 99%;height: 90px;" placeholder="请输入你要加密的网址,例如：http://www.baidu.com" oninput="getbyid('y106').value=urlhex(this.value);"></textarea>
+<h5>加密后的连接发给别人可以直接打开哦</h5>
+<textarea  readonly="readonly" id="y106" style="width: 99%;height: 80px;" placeholder="加密后的连接，点击可复制到剪辑板。" onclick="copyhandle(this.value,'yes')"></textarea>
+<p class="alert alert-success">小贴士：加密后拷贝到地址栏回车即可看到效果~ </p>

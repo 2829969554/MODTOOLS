@@ -1,0 +1,94 @@
+<h1><span style="color: rgb(68, 68, 68);"><span style="">C/C++ Unicode与Ansi编码互转</span><br></span></h1><h5><span style="color: rgb(68, 68, 68);">话不多说, 附上已经封装好的代码, 调用即可轻松转换。</span></h5><pre><code class="lang-c++">#include &lt;<b><b><b><b><b>window</b></b></b></b></b>s.h&gt;
+#include<iostream> &lt;iostream&gt;<iostream>
+using namespace std;
+
+void Ansi2Unicode(wchar_t* _Destination, const char*_Source)
+{
+	//预转换，得到所需空间的大小
+	int wcsLen = MultiByteToWideChar(CP_ACP, NULL, _Source, strlen(_Source), NULL, 0);
+
+	//分配空间要给'\0'留个空间，MultiByteToWideChar不会给'\0'空间
+	wchar_t* wszString = new wchar_t[wcsLen + 1];
+	//转换
+	MultiByteToWideChar(CP_ACP, NULL, _Source, strlen(_Source), wszString, wcsLen);
+	//最后加上'\0'
+	wszString[wcsLen] = '\0';
+
+	wcscpy(_Destination, wszString);
+
+	delete[] wszString;
+}
+
+void Unicode2Ansi(char* _Destination, const wchar_t*_Source)
+{
+	//预转换，得到所需空间的大小，这次用的函数和上面名字相反
+	int ansiLen = WideCharToMultiByte(CP_ACP, NULL, _Source, wcslen(_Source), NULL, 0, NULL, NULL);
+	//同上，分配空间要给'\0'留个空间
+	char* szAnsi = new char[ansiLen + 1];
+	//转换
+	//unicode版对应的strlen是wcslen
+	WideCharToMultiByte(CP_ACP, NULL, _Source, wcslen(_Source), szAnsi, ansiLen, NULL, NULL);
+	//最后加上'\0'
+	szAnsi[ansiLen] = '\0';
+
+	strcpy(_Destination, szAnsi);
+
+	delete[] szAnsi;
+}
+
+void UTF82Unicode(wchar_t* _Destination, char* _Source)
+{
+	//UTF8 to Unicode
+	char* szU8 = _Source;
+	//预转换，得到所需空间的大小
+	int wcsLen = ::MultiByteToWideChar(CP_UTF8, NULL, szU8, strlen(szU8), NULL, 0);
+	//分配空间要给'\0'留个空间，MultiByteToWideChar不会给'\0'空间
+	wchar_t* wszString = new wchar_t[wcsLen + 1];
+	//转换
+	::MultiByteToWideChar(CP_UTF8, NULL, szU8, strlen(szU8), wszString, wcsLen);
+	//最后加上'\0'
+	wszString[wcsLen] = '\0';
+	
+	wcscpy(_Destination, wszString);
+
+	delete[] wszString;
+	wszString = NULL;
+}
+
+void Unicode2UTF8(char* _Destination, wchar_t*  _Source)
+{
+	// unicode to UTF8
+	wchar_t* wszString =_Source;
+	//预转换，得到所需空间的大小，这次用的函数和上面名字相反
+	int u8Len = ::WideCharToMultiByte(CP_UTF8, NULL, wszString, wcslen(wszString), NULL, 0, NULL, NULL);
+	//同上，分配空间要给'\0'留个空间
+	//UTF8虽然是Unicode的压缩形式，但也是多字节字符串，所以可以以char的形式保存
+	char* szU8 = new char[u8Len + 1];
+	//转换
+	//unicode版对应的strlen是wcslen
+	::WideCharToMultiByte(CP_UTF8, NULL, wszString, wcslen(wszString), szU8, u8Len, NULL, NULL);
+	//最后加上'\0'
+	szU8[u8Len] = '\0';
+
+	strcpy(_Destination, szU8);
+
+	delete[] szU8;
+	szU8 = NULL;
+}
+
+int main()
+{
+	wchar_t wstr[1024];
+	char str[1024];
+
+	wcscpy(wstr, L"U转A!");
+	Unicode2Ansi(str, wstr);
+	MessageBoxA(NULL, str, "", MB_ICONASTERISK | MB_OK);
+
+	strcpy(str, "A转U");
+	Ansi2Unicode(wstr, str);
+	MessageBox(NULL, wstr, L"", MB_ICONASTERISK | MB_OK);
+
+
+	return 0;
+}<br></iostream></iostream></code></pre>

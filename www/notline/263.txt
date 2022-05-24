@@ -1,0 +1,326 @@
+<h1>C/C++调用WMI获取硬盘CPU序列号网卡地址</h1><p><br></p><p>最近要做个简单的网络验证, 需要取硬件的一些信息, 例如CPU序列号, 硬盘序列号, MAC地址, OS名称等等, 折腾了一天终于搞定了并且做了些简单封装, 先放个截图</p><p><img src="https://66-1251737204.cos.ap-beijing-1.myqcloud.com/citext.cn/images/QQ%E6%88%AA%E5%9B%BE20201108164716.png" alt=""></p><p><strong>stdafx.h</strong></p><pre><code><span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">// stdafx.h : 标准系统包含文件的包含文件，</span>
+<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">// 或是经常使用但不常更改的</span>
+<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">// 特定于项目的包含文件</span>
+<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//</span>
+
+<span class="h<b>.js</b>-meta" style="border: 0px; vertical-align: baseline; color: rgb(252, 155, 155);">#<span class="h<b>.js</b>-meta-keyword" style="border: 0px; vertical-align: baseline;">pragma</span> once</span>
+
+<span class="h<b>.js</b>-meta" style="border: 0px; vertical-align: baseline; color: rgb(252, 155, 155);">#<span class="h<b>.js</b>-meta-keyword" style="border: 0px; vertical-align: baseline;">include</span> <span class="h<b>.js</b>-string" style="border: 0px; vertical-align: baseline; color: rgb(162, 252, 162);">"targetver.h"</span></span>
+
+<span class="h<b>.js</b>-meta" style="border: 0px; vertical-align: baseline; color: rgb(252, 155, 155);">#<span class="h<b>.js</b>-meta-keyword" style="border: 0px; vertical-align: baseline;">include</span> <span class="h<b>.js</b>-meta-string" style="border: 0px; vertical-align: baseline;">&lt;stdio.h&gt;</span></span>
+<span class="h<b>.js</b>-meta" style="border: 0px; vertical-align: baseline; color: rgb(252, 155, 155);">#<span class="h<b>.js</b>-meta-keyword" style="border: 0px; vertical-align: baseline;">include</span> <span class="h<b>.js</b>-meta-string" style="border: 0px; vertical-align: baseline;">&lt;tchar.h&gt;</span></span>
+
+
+
+<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">// <span class="h<b>.js</b>-doctag" style="border: 0px; vertical-align: baseline;">TODO:</span>  在此处引用程序需要的其他头文件</span>
+<span class="h<b>.js</b>-meta" style="border: 0px; vertical-align: baseline; color: rgb(252, 155, 155);">#<span class="h<b>.js</b>-meta-keyword" style="border: 0px; vertical-align: baseline;">include</span><span class="h<b>.js</b>-meta-string" style="border: 0px; vertical-align: baseline;">&lt;Windows.h&gt;</span></span>
+<span class="h<b>.js</b>-meta" style="border: 0px; vertical-align: baseline; color: rgb(252, 155, 155);">#<span class="h<b>.js</b>-meta-keyword" style="border: 0px; vertical-align: baseline;">include</span> <span class="h<b>.js</b>-meta-string" style="border: 0px; vertical-align: baseline;">&lt;comdef.h&gt;</span></span>
+<span class="h<b>.js</b>-meta" style="border: 0px; vertical-align: baseline; color: rgb(252, 155, 155);">#<span class="h<b>.js</b>-meta-keyword" style="border: 0px; vertical-align: baseline;">include</span> <span class="h<b>.js</b>-meta-string" style="border: 0px; vertical-align: baseline;">&lt;Wbemidl.h&gt;</span></span>
+<span class="h<b>.js</b>-meta" style="border: 0px; vertical-align: baseline; color: rgb(252, 155, 155);">#<span class="h<b>.js</b>-meta-keyword" style="border: 0px; vertical-align: baseline;">pragma</span> comment(lib, <span class="h<b>.js</b>-string" style="border: 0px; vertical-align: baseline; color: rgb(162, 252, 162);">"wbemuuid.lib"</span>)</span>
+
+
+<span class="h<b>.js</b>-meta" style="border: 0px; vertical-align: baseline; color: rgb(252, 155, 155);">#<span class="h<b>.js</b>-meta-keyword" style="border: 0px; vertical-align: baseline;">include</span> <span class="h<b>.js</b>-meta-string" style="border: 0px; vertical-align: baseline;">&lt;iostream&gt;</span></span>
+<span class="h<b>.js</b>-meta" style="border: 0px; vertical-align: baseline; color: rgb(252, 155, 155);">#<span class="h<b>.js</b>-meta-keyword" style="border: 0px; vertical-align: baseline;">include</span><span class="h<b>.js</b>-meta-string" style="border: 0px; vertical-align: baseline;">&lt;string&gt;</span></span>
+<span class="h<b>.js</b>-meta" style="border: 0px; vertical-align: baseline; color: rgb(252, 155, 155);">#<span class="h<b>.js</b>-meta-keyword" style="border: 0px; vertical-align: baseline;">include</span><span class="h<b>.js</b>-meta-string" style="border: 0px; vertical-align: baseline;">&lt;vector&gt;</span></span>
+<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">using</span> <span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">namespace</span> <span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">std</span>;</code></pre><p><strong>main.cpp</strong></p><pre><code><span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">// ConsoleApplication1.cpp : 定义控制台应用程序的入口点。</span>
+<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//</span>
+<span class="h<b>.js</b>-meta" style="border: 0px; vertical-align: baseline; color: rgb(252, 155, 155);">#<span class="h<b>.js</b>-meta-keyword" style="border: 0px; vertical-align: baseline;">include</span> <span class="h<b>.js</b>-string" style="border: 0px; vertical-align: baseline; color: rgb(162, 252, 162);">"stdafx.h"</span></span>
+
+
+<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">class</span> system_info
+{
+<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">public</span>:
+	~system_info();
+	system_info(<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">wchar_t</span>* WMI_Namespace = <span class="h<b>.js</b>-string" style="border: 0px; vertical-align: baseline; color: rgb(162, 252, 162);">L"ROOT\\CIMV2"</span>);
+	<span class="h<b>.js</b>-function" style="border: 0px; vertical-align: baseline;"><span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">void</span> <span class="h<b>.js</b>-title" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">Get_CpuId</span><span class="h<b>.js</b>-params" style="border: 0px; vertical-align: baseline;">(<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">string</span>&amp; dest)</span></span>;
+	<span class="h<b>.js</b>-function" style="border: 0px; vertical-align: baseline;"><span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">void</span> <span class="h<b>.js</b>-title" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">Get_DiskDriveId</span><span class="h<b>.js</b>-params" style="border: 0px; vertical-align: baseline;">(<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">string</span>&amp; dest)</span></span>;
+	<span class="h<b>.js</b>-function" style="border: 0px; vertical-align: baseline;"><span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">void</span> <span class="h<b>.js</b>-title" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">Get_MacAddress</span><span class="h<b>.js</b>-params" style="border: 0px; vertical-align: baseline;">(<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">string</span>&amp; dest)</span></span>;
+	<span class="h<b>.js</b>-function" style="border: 0px; vertical-align: baseline;"><span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">void</span> <span class="h<b>.js</b>-title" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">Get_OsName</span><span class="h<b>.js</b>-params" style="border: 0px; vertical-align: baseline;">(<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">string</span>&amp; dest)</span></span>;
+<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">private</span>:
+	IWbemServices* pSvc; <span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//接收指向绑定到指定名称空间的IWbemServices对象的指针</span>
+	IWbemLocator* pLoc; <span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//接收CoCreateInstance 创建的实例指针</span>
+	<span class="h<b>.js</b>-function" style="border: 0px; vertical-align: baseline;"><span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">bool</span> <span class="h<b>.js</b>-title" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">ExecQuery</span><span class="h<b>.js</b>-params" style="border: 0px; vertical-align: baseline;">(<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">char</span>* strQueryLanguage, <span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">char</span>* strQuery, IEnumWbemClassObject** pEnumerator)</span></span>;
+};
+
+system_info::~system_info()
+{
+	pSvc-&gt;Release();
+	pLoc-&gt;Release();
+}
+
+system_info::system_info(<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">wchar_t</span> *WMI_Namespace)
+{
+	pSvc = <span class="h<b>.js</b>-literal" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">NULL</span>;
+	pLoc = <span class="h<b>.js</b>-literal" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">NULL</span>;
+
+
+	HRESULT hres = CoCreateInstance(
+		CLSID_WbemLocator,
+		<span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">0</span>,
+		CLSCTX_INPROC_SERVER,
+		IID_IWbemLocator, (LPVOID *)&amp;pLoc);
+
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">if</span> (FAILED(hres))
+	{
+		<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">cout</span> &lt;&lt; <span class="h<b>.js</b>-string" style="border: 0px; vertical-align: baseline; color: rgb(162, 252, 162);">"Failed to create IWbemLocator object."</span>
+			&lt;&lt; <span class="h<b>.js</b>-string" style="border: 0px; vertical-align: baseline; color: rgb(162, 252, 162);">" Err code = 0x"</span>
+			&lt;&lt; hex &lt;&lt; hres &lt;&lt; <span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">endl</span>;
+		CoUninitialize();
+	}
+
+
+
+	<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//使用创建好的实例进行连接, 连接成功后的指针保存在psvc</span>
+	hres = pLoc-&gt;ConnectServer(
+		<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">_bstr_t</span>(WMI_Namespace), <span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">// Object path of WMI namespace</span>
+		<span class="h<b>.js</b>-literal" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">NULL</span>,                    <span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">// User name. NULL = current user</span>
+		<span class="h<b>.js</b>-literal" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">NULL</span>,                    <span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">// User password. NULL = current</span>
+		<span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">0</span>,                       <span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">// Locale. NULL indicates current</span>
+		<span class="h<b>.js</b>-literal" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">NULL</span>,                    <span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">// Security flags.</span>
+		<span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">0</span>,                       <span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">// Authority (for example, Kerberos)</span>
+		<span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">0</span>,                       <span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">// Context object </span>
+		&amp;pSvc                    <span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">// pointer to IWbemServices proxy</span>
+	);
+
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">if</span> (FAILED(hres))
+	{
+		<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">cout</span> &lt;&lt; <span class="h<b>.js</b>-string" style="border: 0px; vertical-align: baseline; color: rgb(162, 252, 162);">"Could not connect. Error code = 0x"</span>
+			&lt;&lt; hex &lt;&lt; hres &lt;&lt; <span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">endl</span>;
+		pLoc-&gt;Release();
+		CoUninitialize();
+	}
+
+
+	<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">// Step 5: --------------------------------------------------</span>
+	<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">// Set security levels on the proxy -------------------------</span>
+
+	hres = CoSetProxyBlanket(
+		pSvc,                        <span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">// Indicates the proxy to set</span>
+		RPC_C_AUTHN_WINNT,           <span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">// RPC_C_AUTHN_xxx</span>
+		RPC_C_AUTHZ_NONE,            <span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">// RPC_C_AUTHZ_xxx</span>
+		<span class="h<b>.js</b>-literal" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">NULL</span>,                        <span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">// Server principal name </span>
+		RPC_C_AUTHN_LEVEL_CALL,      <span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">// RPC_C_AUTHN_LEVEL_xxx </span>
+		RPC_C_IMP_LEVEL_IMPERSONATE, <span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">// RPC_C_IMP_LEVEL_xxx</span>
+		<span class="h<b>.js</b>-literal" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">NULL</span>,                        <span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">// client identity</span>
+		EOAC_NONE                    <span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">// proxy capabilities </span>
+	);
+
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">if</span> (FAILED(hres))
+	{
+		<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">cout</span> &lt;&lt; <span class="h<b>.js</b>-string" style="border: 0px; vertical-align: baseline; color: rgb(162, 252, 162);">"Could not set proxy blanket. Error code = 0x"</span>
+			&lt;&lt; hex &lt;&lt; hres &lt;&lt; <span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">endl</span>;
+		pSvc-&gt;Release();
+		pLoc-&gt;Release();
+		CoUninitialize();
+	}
+
+
+}
+
+<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">bool</span> system_info::ExecQuery(<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">char</span>* strQueryLanguage, <span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">char</span>* strQuery, IEnumWbemClassObject** pEnumerator)
+{
+	HRESULT hres = pSvc-&gt;ExecQuery(
+		<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">bstr_t</span>(strQueryLanguage),
+		<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">bstr_t</span>(strQuery),
+		WBEM_FLAG_FORWARD_ONLY | WBEM_FLAG_RETURN_IMMEDIATELY,
+		<span class="h<b>.js</b>-literal" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">NULL</span>,
+		pEnumerator);
+
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">if</span> (FAILED(hres))
+	{
+		<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">cout</span> &lt;&lt; <span class="h<b>.js</b>-string" style="border: 0px; vertical-align: baseline; color: rgb(162, 252, 162);">"Query for operating system name failed."</span>
+			&lt;&lt; <span class="h<b>.js</b>-string" style="border: 0px; vertical-align: baseline; color: rgb(162, 252, 162);">" Error code = 0x"</span>
+			&lt;&lt; hex &lt;&lt; hres &lt;&lt; <span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">endl</span>;
+		pSvc-&gt;Release();
+		pLoc-&gt;Release();
+		CoUninitialize();
+		<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">return</span> <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">0</span>;               <span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">// Program has failed.</span>
+	}
+
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">return</span> <span class="h<b>.js</b>-literal" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">true</span>;
+}
+
+<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">void</span> system_info::Get_CpuId(<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">string</span>&amp; dest)
+{
+	IEnumWbemClassObject* pEnumerator=<span class="h<b>.js</b>-literal" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">NULL</span>;<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//存放查询语句执行结果</span>
+	ExecQuery(<span class="h<b>.js</b>-string" style="border: 0px; vertical-align: baseline; color: rgb(162, 252, 162);">"WQL"</span>, <span class="h<b>.js</b>-string" style="border: 0px; vertical-align: baseline; color: rgb(162, 252, 162);">"SELECT * FROM Win32_Processor WHERE (ProcessorId IS NOT NULL)"</span>, &amp;pEnumerator);
+
+
+	IWbemClassObject *pclsObj = <span class="h<b>.js</b>-literal" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">NULL</span>;
+	ULONG uReturn = <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">0</span>;
+
+
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">while</span> (pEnumerator)
+	{
+		<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//  此方法将查询返回的数据对象传递给IWbemClassObject指针。</span>
+		HRESULT hr = pEnumerator-&gt;Next(WBEM_INFINITE, <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">1</span>,
+			&amp;pclsObj, &amp;uReturn);
+
+		<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">if</span> (<span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">0</span> == uReturn)
+		{
+			<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">break</span>;
+		}
+
+		VARIANT vtProp;
+
+		<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">// Get the value of the Name property</span>
+		hr = pclsObj-&gt;Get(<span class="h<b>.js</b>-string" style="border: 0px; vertical-align: baseline; color: rgb(162, 252, 162);">L"ProcessorId"</span>, <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">0</span>, &amp;vtProp, <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">0</span>, <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">0</span>);
+		dest = (<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">_bstr_t</span>)vtProp.bstrVal;
+
+		VariantClear(&amp;vtProp);
+
+		pclsObj-&gt;Release();
+	}
+
+	pEnumerator-&gt;Release();
+}
+
+<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">void</span> system_info::Get_DiskDriveId(<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">string</span> &amp; dest)
+{
+	IEnumWbemClassObject* pEnumerator = <span class="h<b>.js</b>-literal" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">NULL</span>;<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//存放查询语句执行结果</span>
+	ExecQuery(<span class="h<b>.js</b>-string" style="border: 0px; vertical-align: baseline; color: rgb(162, 252, 162);">"WQL"</span>, <span class="h<b>.js</b>-string" style="border: 0px; vertical-align: baseline; color: rgb(162, 252, 162);">"SELECT * FROM Win32_DiskDrive WHERE (SerialNumber IS NOT NULL)"</span>, &amp;pEnumerator);
+
+
+	IWbemClassObject *pclsObj = <span class="h<b>.js</b>-literal" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">NULL</span>;
+	ULONG uReturn = <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">0</span>;
+
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">while</span> (pEnumerator)
+	{
+		<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//  此方法将查询返回的数据对象传递给IWbemClassObject指针。</span>
+		HRESULT hr = pEnumerator-&gt;Next(WBEM_INFINITE, <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">1</span>,
+			&amp;pclsObj, &amp;uReturn);
+
+		<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">if</span> (<span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">0</span> == uReturn)
+		{
+			<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">break</span>;
+		}
+
+		VARIANT vtProp;
+
+		<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">// Get the value of the Name property</span>
+		hr = pclsObj-&gt;Get(<span class="h<b>.js</b>-string" style="border: 0px; vertical-align: baseline; color: rgb(162, 252, 162);">L"SerialNumber"</span>, <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">0</span>, &amp;vtProp, <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">0</span>, <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">0</span>);
+		dest = (<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">_bstr_t</span>)vtProp.bstrVal;
+
+		VariantClear(&amp;vtProp);
+
+		pclsObj-&gt;Release();
+
+		<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//这里直接跳出, 只获取第一个硬盘的序列号</span>
+		<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">break</span>;
+	}
+
+	pEnumerator-&gt;Release();
+}
+
+<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">void</span> system_info::Get_MacAddress(<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">string</span>&amp; dest)
+{
+	IEnumWbemClassObject* pEnumerator = <span class="h<b>.js</b>-literal" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">NULL</span>;<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//存放查询语句执行结果</span>
+	ExecQuery(<span class="h<b>.js</b>-string" style="border: 0px; vertical-align: baseline; color: rgb(162, 252, 162);">"WQL"</span>, <span class="h<b>.js</b>-string" style="border: 0px; vertical-align: baseline; color: rgb(162, 252, 162);">"SELECT * FROM Win32_NetworkAdapterConfiguration WHERE IPEnabled = True"</span>, &amp;pEnumerator);
+
+	IWbemClassObject *pclsObj = <span class="h<b>.js</b>-literal" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">NULL</span>;
+	ULONG uReturn = <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">0</span>;
+	<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">vector</span>&lt;<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">string</span>&gt; MACAddress;
+
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">while</span> (pEnumerator)
+	{
+		<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//  此方法将查询返回的数据对象传递给IWbemClassObject指针。</span>
+		HRESULT hr = pEnumerator-&gt;Next(WBEM_INFINITE, <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">1</span>,
+			&amp;pclsObj, &amp;uReturn);
+
+		<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">if</span> (<span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">0</span> == uReturn)
+		{
+			<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">break</span>;
+		}
+
+		VARIANT vtProp;
+		pclsObj-&gt;Get(<span class="h<b>.js</b>-string" style="border: 0px; vertical-align: baseline; color: rgb(162, 252, 162);">L"MACAddress"</span>, <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">0</span>, &amp;vtProp, <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">0</span>, <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">0</span>);
+		MACAddress.push_back((<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">string</span>)<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">_bstr_t</span>(vtProp.bstrVal));
+
+		
+
+
+		VariantClear(&amp;vtProp);
+
+		pclsObj-&gt;Release();
+	}
+
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">if</span> (MACAddress.size() &gt;= <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">1</span>)
+	{
+		dest = MACAddress[<span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">0</span>];<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//返回第一个网卡地址</span>
+	}
+
+	pEnumerator-&gt;Release();
+}
+
+<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">void</span> system_info::Get_OsName(<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">string</span> &amp; dest)
+{
+	IEnumWbemClassObject* pEnumerator = <span class="h<b>.js</b>-literal" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">NULL</span>;<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//存放查询语句执行结果</span>
+	ExecQuery(<span class="h<b>.js</b>-string" style="border: 0px; vertical-align: baseline; color: rgb(162, 252, 162);">"WQL"</span>, <span class="h<b>.js</b>-string" style="border: 0px; vertical-align: baseline; color: rgb(162, 252, 162);">"SELECT * FROM Win32_OperatingSystem WHERE (Name IS NOT NULL)"</span>, &amp;pEnumerator);
+
+
+	IWbemClassObject *pclsObj = <span class="h<b>.js</b>-literal" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">NULL</span>;
+	ULONG uReturn = <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">0</span>;
+
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">while</span> (pEnumerator)
+	{
+		<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//  此方法将查询返回的数据对象传递给IWbemClassObject指针。</span>
+		HRESULT hr = pEnumerator-&gt;Next(WBEM_INFINITE, <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">1</span>,
+			&amp;pclsObj, &amp;uReturn);
+
+		<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">if</span> (<span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">0</span> == uReturn)
+		{
+			<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">break</span>;
+		}
+
+		VARIANT vtProp;
+
+		<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">// Get the value of the Name property</span>
+		hr = pclsObj-&gt;Get(<span class="h<b>.js</b>-string" style="border: 0px; vertical-align: baseline; color: rgb(162, 252, 162);">L"Name"</span>, <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">0</span>, &amp;vtProp, <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">0</span>, <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">0</span>);
+		dest = (<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">_bstr_t</span>)vtProp.bstrVal;
+
+		VariantClear(&amp;vtProp);
+
+		pclsObj-&gt;Release();
+
+		<span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//这里直接跳出, 只获取第一个硬盘的序列号</span>
+		<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">break</span>;
+	}
+
+	pEnumerator-&gt;Release();
+}
+
+<span class="h<b>.js</b>-function" style="border: 0px; vertical-align: baseline;"><span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span> <span class="h<b>.js</b>-title" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">main</span><span class="h<b>.js</b>-params" style="border: 0px; vertical-align: baseline;">(<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">int</span> argc, <span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">char</span> **argv)</span>
+</span>{
+	CoInitializeEx(<span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">0</span>, COINIT_MULTITHREADED);
+	CoInitializeSecurity(
+		<span class="h<b>.js</b>-literal" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">NULL</span>,
+		<span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">-1</span>,                          <span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">// COM authentication</span>
+		<span class="h<b>.js</b>-literal" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">NULL</span>,                        <span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">// Authentication services</span>
+		<span class="h<b>.js</b>-literal" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">NULL</span>,                        <span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">// Reserved</span>
+		RPC_C_AUTHN_LEVEL_DEFAULT,   <span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">// Default authentication </span>
+		RPC_C_IMP_LEVEL_IMPERSONATE, <span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">// Default Impersonation  </span>
+		<span class="h<b>.js</b>-literal" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">NULL</span>,                        <span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">// Authentication info</span>
+		EOAC_NONE,                   <span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">// Additional capabilities </span>
+		<span class="h<b>.js</b>-literal" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">NULL</span>                         <span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">// Reserved</span>
+	);
+
+	<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">string</span> CpuId, DiskDriveId, MACAddress, OsName;
+
+	system_info *sys= <span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">new</span> system_info;
+
+	sys-&gt;Get_DiskDriveId(DiskDriveId);
+	sys-&gt;Get_MacAddress(MACAddress);
+	sys-&gt;Get_CpuId(CpuId);
+	sys-&gt;Get_OsName(OsName);
+
+	<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">cout</span> &lt;&lt; <span class="h<b>.js</b>-string" style="border: 0px; vertical-align: baseline; color: rgb(162, 252, 162);">"OS Name: "</span> &lt;&lt; OsName &lt;&lt; <span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">endl</span>;
+	<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">cout</span> &lt;&lt; <span class="h<b>.js</b>-string" style="border: 0px; vertical-align: baseline; color: rgb(162, 252, 162);">"CPU: "</span> &lt;&lt; CpuId &lt;&lt; <span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">endl</span>;
+	<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">cout</span> &lt;&lt; <span class="h<b>.js</b>-string" style="border: 0px; vertical-align: baseline; color: rgb(162, 252, 162);">"MAC地址: "</span> &lt;&lt; MACAddress &lt;&lt; <span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">endl</span>;
+	<span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">cout</span> &lt;&lt; <span class="h<b>.js</b>-string" style="border: 0px; vertical-align: baseline; color: rgb(162, 252, 162);">"硬盘sn: "</span> &lt;&lt; DiskDriveId &lt;&lt; <span class="h<b>.js</b>-built_in" style="border: 0px; vertical-align: baseline; color: rgb(255, 255, 170);">endl</span>;
+
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">delete</span> sys; <span class="h<b>.js</b>-comment" style="border: 0px; vertical-align: baseline; color: rgb(136, 136, 136);">//赶在CoUninitialize()执行前释放wmi对象</span>
+
+
+	CoUninitialize();
+	<span class="h<b>.js</b>-keyword" style="border: 0px; vertical-align: baseline; color: rgb(252, 194, 140);">return</span> <span class="h<b>.js</b>-number" style="border: 0px; vertical-align: baseline; color: rgb(211, 99, 99);">0</span>;
+}</code></pre><p><strong>WMI编程参考资料:</strong></p><p><a href="https://social.msdn.microsoft.com/Forums/sqlserver/en-US/9d7a00a4-6bcd-444b-a0e2-a49e2b19e350/please-i-need-a-c-routine-with-which-i-can-retrieve-the-hard-disk-serial-number-using-wmi?forum=<b>window</b>ssdk">https://social.msdn.microsoft.com/Forums/sqlserver/en-US/9d7a00a4-6bcd-444b-a0e2-a49e2b19e350/please-i-need-a-c-routine-with-which-i-can-retrieve-the-hard-disk-serial-number-using-wmi?forum=<b>window</b>ssdk</a></p><p><a href="https://docs.microsoft.com/zh-cn/<b>window</b>s/win32/wmisdk/example--getting-wmi-data-from-the-local-computer?redirectedfrom=MSDN">https://docs.microsoft.com/zh-cn/<b>window</b>s/win32/wmisdk/example–getting-wmi-data-from-the-local-computer?redirectedfrom=MSDN</a></p><p><a href="http://www.doc88.com/p-3866623931452.html">http://www.doc88.com/p-3866623931452.html</a></p>

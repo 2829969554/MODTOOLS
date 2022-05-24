@@ -1,0 +1,5 @@
+<h1 style="margin-left: 40px;">HelloWorld.java</h1><p><br></p><pre><code class="lang-java">public class HelloWorld{
+&nbsp; &nbsp; public static void main(String args[]) {
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;System.out.println("HelloWorld");
+&nbsp; &nbsp; }
+}<br></code></pre><p style="margin-left: 40px;"><br></p><p style="margin-left: 40px;"><br></p><p style="margin-left: 40px;"><img alt="Image" src="https://ncstatic.clewm.net/free/2021/1212/20/faaab149e5d12e607a6fdfb0a8ed4379.png?x-oss-process=image/auto-orient,1" width="653" height="140"><br></p><p style="margin-left: 40px;"><br></p><p style="margin-left: 40px;">运行效果图：</p><p style="margin-left: 40px;"><img alt="Image" src="https://ncstatic.clewm.net/free/2021/1212/20/8f529cef0d2ce388e7c2892726d1445e.png?x-oss-process=image/auto-orient,1" width="884" height="583"><br></p>

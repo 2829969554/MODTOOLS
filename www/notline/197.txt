@@ -1,0 +1,35 @@
+<pre><code class="lang-c++">#include&lt;iostream&gt;
+namespace std {
+class stringto {
+public:
+&nbsp; &nbsp; stringto(const char *s) : s(nullptr) { if (s) if (alloc(strlen(s))) strcpy(this-&gt;s, s); }
+&nbsp; &nbsp; stringto(string s) : s(nullptr) { if (alloc(s.length())) strcpy(this-&gt;s, s.data()); }
+&nbsp; &nbsp; string operator=(string s) { if (alloc(s.length())) strcpy(this-&gt;s, s.data()); return this-&gt;s; }
+&nbsp; &nbsp; char *operator=(const char *s) { if (s) if (alloc(strlen(s))) strcpy(this-&gt;s, s); return this-&gt;s; }
+&nbsp; &nbsp; ~stringto() { del(); }
+&nbsp; &nbsp; bool bad() const { return (s == nullptr); }
+&nbsp; &nbsp; long tol() const { return bad() ? 0 : strtol(s, NULL, 10); }
+&nbsp; &nbsp; long toll() const { return bad() ? 0 : strtoll(s, NULL, 10); }
+&nbsp; &nbsp; long toul() const { return bad() ? 0 : strtoul(s, NULL, 10); }
+&nbsp; &nbsp; long toull() const { return bad() ? 0 : strtoull(s, NULL, 10); }
+&nbsp; &nbsp; float tof() const { return bad() ? 0 : strtof(s, NULL); }
+&nbsp; &nbsp; double tod() const { return bad() ? 0 : strtod(s, NULL); }
+private:
+&nbsp; &nbsp; void del() { if (s) { delete[] s; s = nullptr; } }
+&nbsp; &nbsp; bool alloc(int n) { del(); return ((s = new char[n + 1]) != nullptr); }
+&nbsp; &nbsp; char *s;
+};
+}
+int main()
+{
+&nbsp; &nbsp; std::string s;
+&nbsp; &nbsp; while (std::getline(std::cin, s)) {
+&nbsp; &nbsp; &nbsp; &nbsp; std::stringto sto(s);
+&nbsp; &nbsp; &nbsp; &nbsp; std::cout &lt;&lt; "bad: " &lt;&lt; sto.bad() &lt;&lt; "\n";
+&nbsp; &nbsp; &nbsp; &nbsp; std::cout &lt;&lt; sto.tof() &lt;&lt; "\n";
+&nbsp; &nbsp; &nbsp; &nbsp; std::cout &lt;&lt; sto.tod() &lt;&lt; "\n";
+&nbsp; &nbsp; &nbsp; &nbsp; std::cout &lt;&lt; sto.tol() &lt;&lt; "\n";
+&nbsp; &nbsp; &nbsp; &nbsp; std::cout &lt;&lt; sto.toll() &lt;&lt; "\n";
+&nbsp; &nbsp; &nbsp; &nbsp; std::cout &lt;&lt; sto.toull() &lt;&lt; std::endl;
+&nbsp; &nbsp; }
+}<br></code></pre>

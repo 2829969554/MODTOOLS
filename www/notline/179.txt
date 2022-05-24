@@ -1,0 +1,6 @@
+<pre><code class="lang-java">
+public class sleep() {
+    private static void main(string args[]) {
+&nbsp; &nbsp; &nbsp; &nbsp; system.out.print("sleep 10 hours! \n");
+    }
+}</code></pre>

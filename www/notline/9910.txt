@@ -1,0 +1,11 @@
+<h4>JS代码加密</h4>
+<textarea style="width: 99%;height: 90px;" placeholder="请输入正常js代码，例如:alert('hello，world!');" oninput="getbyid('y106').value=jsencode(this.value);"></textarea>
+
+<textarea readonly="readonly" id="y106" style="width: 99%;height: 150px;" placeholder="这里显示加密后的js代码,点击可复制到剪辑板。" onclick="copyhandle(this.value,'yes')"></textarea>
+
+<button onclick="jsrun(getbyid('y106').value);">运行加密后的代码</button>
+<p class="alert alert-success">小贴士：点击无反应说明代码有问题哦~ </p>
+<h4>加密后js代码还原</h4>
+<textarea style="width: 99%;height: 150px;" placeholder="这里输入加密后的js代码" oninput="getbyid('y107').value=jsdecode(this.value);"></textarea>
+
+<textarea  readonly="readonly" id="y107" style="width: 99%;height: 280px;" placeholder="这里显示解密后的内容,点击可复制到剪辑板。" onclick="copyhandle(this.value,'yes')"></textarea>

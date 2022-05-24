@@ -1,0 +1,3 @@
+<h1><b>新建文件&nbsp;</b></h1><h3><b>test.py</b></h3><pre><code class="lang-python">#!/usr/bin/python
+
+print&nbsp;("Hello, Python!")<br></code></pre><h2><b>运行结果：</b></h2><blockquote><p><span style="">Hello, Python!</span><br></p></blockquote>

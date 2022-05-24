@@ -1,0 +1,4 @@
+<h4>汉字转拼音学习工具</h4>
+<textarea style="width: 99%;height: 120px;" placeholder="请输入中文文本" oninput="getbyid('y106').value=hanzitopinyin(this.value);"></textarea>
+
+<textarea  readonly="readonly" id="y106" style="width: 99%;font-size:22px;height: 150px;" placeholder="这里显示拼音,点击可复制到剪辑板。" onclick="copyhandle(this.value,'yes')"></textarea>

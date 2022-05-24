@@ -1,0 +1,95 @@
+<p class="alert alert-success">小贴士：本工具可实现支持GET、POST、HEAD、PUT、OPTIONS、DELETE、PATCH请求方式。</p>
+<h4>请求</h4>
+
+<p>
+<textarea style="width: 99%;height: 25px;" value=""  id="qingqiuurl" onblur="romset('dqurl',this.value);" placeholder="请输入请求URL地址"></textarea>
+</p>
+
+<p><b>请求方式：</b>
+    					<select id="qingqiufangshi" class="input-small"  onblur="romset('dqtype',this.value);">
+    						<option value="GET" selected="selected">GET</option>
+    						<option value="POST">POST</option>
+    						<option value="HEAD">HEAD</option>
+    						<option value="PUT">PUT</option>
+    						<option value="OPTIONS">OPTIONS</option>
+    						<option value="DELETE">DELETE</option>
+    						<option value="PATCH">PATCH</option>
+    					</select>
+</p>
+<p style="display:none;">
+<b>编码方式：</b>
+    					<select id="" class="input-small"  oninput="">
+    						<option value="auto" selected="selected">自动识别</option>
+    						<option value="UTF-8">UTF-8</option>
+    						<option value="GBK">GBK</option>
+    						<option value="Unicode">PUT</option>
+    					</select>
+</p>
+<p><b>UserAgent：</b>
+						
+
+    					<select class="input-small" id="qingqiuua" oninput="plus.navigator.setUserAgent(this.value);">
+    					
+    					<option selected="selected" value="Mozilla/5.0 (Linux; U; Android 11; zh-CN; M2007J22C Build/RP1A.200720.011) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/78.0.3904.108 UCBrowser/13.8.8.1169 Mobile Safari/537.36">Android Chrome</option>
+
+    						<option value="Mozilla/5.0 (Windows NT 10.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.60 Safari/537.36 Edg/100.0.1185.29" >Win10	Chrome</option>
+
+    						<option value="Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36 Edg/100.0.1185.44">Win7	Chrome</option>
+
+    						<option value="Mozilla/5.0 (Linux; Android 10; ANA-AN00 Build/HUAWEIANA-AN00; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/86.0.4240.99 XWEB/3211 MMWEBSDK/20220303 Mobile Safari/537.36 MMWEBID/4236 MicroMessenger/8.0.21.2120(0x2800153F) Process/appbrand1 WeChat/arm64 Weixin NetType/4G Language/zh_CN ABI/arm64 MiniProgramEnv/android">安卓微信</option>
+
+
+    						<option value="mozilla/5.0 (iphone; cpu iphone os 5_1_1 like mac os x) applewebkit/534.46 (khtml, like gecko) mobile/9b206 micromessenger/5.0">IOS微信</option>
+ 
+    						<option value="Mozilla/5.0 (iPhone; CPU iPhone OS 12_4_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML; like Gecko) Mobile/16G102 NebulaSDK/1.8.100112 Nebula WK PSDType(0) AlipayDefined(nt:WIFI;ws:414|832|2.0) AliApp(AP/10.1.75.6002) AlipayClient/10.1.75.6002 Language/zh-Hans Region/CN">IOS支付宝</option>
+
+    						
+    					</select>
+</p>
+<p>
+<textarea style="width: 99%;height: 70px;display:none;"  oninput="" placeholder="自定义UserAgent" value=""></textarea>
+</p>
+
+
+<p>
+<textarea style="width: 60%;height: 20px;display:none;"  id="qingqiuhost" oninput="" placeholder="请求协议头Host参数，可空"></textarea>
+</p>
+
+<p>
+<textarea style="width: 85%;height: 20px;display:none;"  id="qingqiureferer" oninput="" placeholder="请求协议头Referer参数，可空"></textarea>
+</p>
+
+<p>
+<textarea style="width: 99%;height: 60px;"  id="qingqiuhead" oninput="romset('dqxyt',this.value);" placeholder="附加请求协议头，格式 参数名：参数值 每行一个，多个请换行，可空。"></textarea>
+</p>
+<p>
+<textarea style="width: 99%;height: 60px;"  id="qingqiucookies" oninput="romset('dqcookie',this.value);" placeholder="附加Cookies，格式 参数名=参数值;参数名1=参数值;  ，可空"></textarea>
+</p>
+<p><b>附加数据类型：</b>
+    					<select id="qingqiuleixing" class="input-small"  oninput="if(this.value=='application/x-www-form-urlencoded'){getbyid('qingqiutext').placeholder='附加提交数据，格式key1=value&key2=value';}else{getbyid('qingqiutext').placeholder='附加提交数据，请输入json字符串！！';}">
+
+
+    						<option checked="checked" value="application/x-www-form-urlencoded" onchange="">表单数据</option>
+
+<option value="application/json2" onclick="">JSON表单</option>
+
+    						<option value="application/json" onclick="">JSON文本</option>
+    					</select>
+</p>
+<p>
+<textarea style="width: 99%;height: 90px;" oninput="romset('dqtext',this.value);"  id="qingqiutext" placeholder="附加提交数据，格式 key1=value&key2=value"></textarea>
+</p>
+<p>
+&nbsp;&nbsp;&nbsp;
+<a onclick="kaishipush();">开始提交</a>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a onclick="kaishiqingchu();">一键清除</a>
+</p>
+<h4>响应</h4>
+<p style="font-size:22px;text-align:center;color:green;display:none;" id="yanshifu">加载中..</p>
+<p>状态码：<b id='zhuangtaima'></b>状态：<b id='zhuangtai'></b><br/>类型：<b id='zhuangtaileixing'></b></p>
+<p>
+<textarea style="width: 99%;height: 120px;"  id="xiangyinhead" readonly="readonly" onclick="strcopy(this.value,1);" placeholder="响应协议头,点击可复制。"></textarea>
+</p>
+<textarea style="width: 99%;height: 280px;"  id="xiangyingtext" readonly="readonly" onclick="strcopy(this.value,1);" placeholder="响应消息,点击可复制。"></textarea>
+</p>

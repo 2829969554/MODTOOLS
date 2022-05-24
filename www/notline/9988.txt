@@ -1,0 +1,23 @@
+<p class="alert alert-success">小贴士：本工具可实现针对AES、DES、RC4、Rabbit、TripleDes等多种算法的密钥加密。</p>
+<h4>加密区</h4>
+<p><b>加密算法：</b>
+    					<select id="jiamikeytype" class="input-small"  oninput="getbyid('y106').value=kaishijiami(getbyid('ystr').value,getbyid('jiamikeytype').value,getbyid('jiamikey').value);">
+    						<option value="1" selected="selected">AES</option>
+    						<option value="2">DES</option>
+    						<option value="3">RC4</option>
+    						<option value="4">Rabbit</option>
+    						<option value="5">TripleDes</option>
+    					</select>
+</p>
+<textarea style="width: 85%;height: 20px;"  id="jiamikey" oninput="" placeholder="请输入密钥" oninput="getbyid('y106').value=kaishijiami(getbyid('ystr').value,getbyid('jiamikeytype').value,getbyid('jiamikey').value);"></textarea>
+
+
+<textarea id='ystr' style="width: 99%;height: 120px;" placeholder="请把你需要解密的内容粘贴在这里" oninput="getbyid('y106').value=kaishijiami(this.value,getbyid('jiamikeytype').value,getbyid('jiamikey').value);"></textarea>
+
+<textarea  readonly="readonly" id="y106" style="width: 99%;height: 90px;" placeholder="这里显示加密后的内容,点击可复制到剪辑板。" onclick="copyhandle(this.value,'yes')"></textarea>
+
+<h4>解密区</h4>
+<textarea style="width: 99%;height: 120px;" placeholder="请输入密文" oninput="getbyid('y107').value=kaishijiemi(this.value,getbyid('jiamikeytype').value,getbyid('jiamikey').value);"></textarea>
+
+<textarea  readonly="readonly" id="y107" style="width: 99%;height: 90px;" placeholder="这里显示解密后的内容,点击可复制到剪辑板。" onclick="copyhandle(this.value,'yes')"></textarea>
+

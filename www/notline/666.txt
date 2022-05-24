@@ -1,0 +1,9 @@
+<h4>BASE64 Encode</h4>
+<textarea style="width: 99%;height: 90px;" placeholder="请输入源文本" oninput="getbyid('y104').value=b64e(this.value);"></textarea>
+
+<textarea  readonly="readonly" id="y104" style="width: 99%;height: 120px;" placeholder="这里显示base64编码,点击可复制到剪辑板。" onclick="copyhandle(this.value,'yes')"></textarea>
+
+<h4>BASE64 Decode</h4>
+<textarea style="width: 99%;height: 120px;" placeholder="这里输入base64密文" oninput="getbyid('y105').value=b64d(this.value);"></textarea>
+
+<textarea  readonly="readonly" id="y105" style="width: 99%;height: 90px;" placeholder="这里显示解密后的内容,点击可复制到剪辑板。" onclick="copyhandle(this.value,'yes')"></textarea>

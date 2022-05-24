@@ -1,0 +1,17 @@
+<h4>摩斯电码加密</h4>
+<p> <b>分割符:</b>
+<input name="sffgmosi" type="radio" value='xg' checked="checked" onchange="romset('sffgmosi',this.value);getbyid('y106').value=mosizhe(getbyid('yuadus').value); if(romget('sffgmosi')=='kg'){getbyid('y106').value=getbyid('y106').value.replace(/\//g,' ');}">斜杠</input>
+<input name="sffgmosi" type="radio" value='kg' onchange="romset('sffgmosi',this.value);getbyid('y106').value=mosizhe(getbyid('yuadus').value); if(romget('sffgmosi')=='kg'){getbyid('y106').value=getbyid('y106').value.replace(/\//g,' ');}"> 空格</input>
+</p>
+
+
+<textarea id="yuadus" style="width: 99%;height: 90px;" placeholder="请输入明文" oninput="getbyid('y106').value=mosizhe(this.value); if(romget('sffgmosi')=='kg'){getbyid('y106').value=getbyid('y106').value.replace(/\//g,' ');}"></textarea>
+
+<textarea  readonly="readonly" id="y106" style="width: 99%;height: 120px;" placeholder="这里显示加密后的摩斯电码,点击可复制到剪辑板。" onclick="copyhandle(this.value,'yes')"></textarea>
+
+<h4>摩斯电码解读</h4>
+<textarea style="width: 99%;height: 120px;" placeholder="这里输入摩斯电码" oninput="if(this.value.indexOf('/') == -1){getbyid('y107').value=mosizhd(this.value.replace(/ /g,'/'));}else{ getbyid('y107').value=mosizhd(this.value);}"></textarea>
+
+<textarea  readonly="readonly" id="y107" style="width: 99%;height: 90px;" placeholder="这里显示解密后的内容,点击可复制到剪辑板。" onclick="copyhandle(this.value,'yes')"></textarea>
+
+<p class="alert alert-success">小贴士：摩斯电码字母不区分大小写~ </p>

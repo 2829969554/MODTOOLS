@@ -1,0 +1,1 @@
+<h2>PHP 超级全局变量</h2><p>PHP中预定义了几个超级全局变量（superglobals） ，这意味着它们在一个脚本的全部作用域中都可用。 你不需要特别说明，就可以在函数及类中使用。</p><p>PHP 超级全局变量列表:</p><ul><li>$GLOBALS</li><li>$_SERVER</li><li>$_REQUEST</li><li>$_POST</li><li>$_GET</li><li>$_FILES</li><li>$_ENV</li><li>$_COOKIE</li><li>$_SESSION</li></ul><p>本章节我们将讲解几个常用的超级全局变量,其余变量我们在接下来几个章节会介绍到。</p>

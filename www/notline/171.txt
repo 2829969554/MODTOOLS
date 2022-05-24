@@ -1,0 +1,49 @@
+<pre><code class="lang-markdown">1.用GCC编译控制台程序(exe)
+	例子命令:gcc test.c -o test.exe
+	
+	命令格式:gcc 源码1 源码2 源码3 .... -o 输出文件名
+	
+	例子作用:将 test.c 编译为控制台可执行程序(exe),输出名称为test.exe
+	
+2.用GCC编译窗口程序(exe)
+	例子命令:gcc test.c -o test.exe -m<b><b><b>window</b></b></b>s
+	
+	命令格式:gcc 源码1 源码2 源码3 .... &nbsp;-o 输出文件名 -m<b><b><b>window</b></b></b>s
+	
+	例子作用:将 test.c 编译为Win32窗口可执行程序(exe),不显示黑色的命令窗口,输出名称为test.exe
+	
+3.用GCC编译动态链接库(DLL)
+	例子命令:gcc -shared print.c -o print.dll
+	
+	命令格式:gcc -shared 源码1 源码2 源码3 .... -o 输出文件名
+	
+	例子作用:将 print.c 编译为动态链接库(DLL),输出名称为print.dll
+
+4.用GCC编译静态链接库(LIB)
+	例子命令:gcc -c hello.c -o hello.o
+			ar -crv libhello.lib hello.o			
+			
+	命令格式:gcc -c 源码1 源码2 源码3 .... -o 输出中间文件名
+			ar -crv 输出目标LIB名称 输入中间文件名
+	
+			
+	例子作用:将 hello.c 编译为汇编文件hello.o,再用ar将hello.o打包为libhello.lib
+	
+	扩展例子:
+&nbsp;	32位:gcc -c hello.c -o hello.o -m32
+			ar -crv libhello.lib hello.o	
+			
+	64位:gcc -c hello.c -o hello.o -m64
+			ar -crv libhello.lib hello.o	
+
+5.前3种编译命令可在末尾加上 -m32 或者 -m64
+	-m32 :编译目标程序为32位程序
+	-m64 :编译目标程序为64位程序
+	
+6.编译目标去除文件调试信息与符号,可降低文件体积,提高效率
+	例子命令1: strip test.exe
+	例子命令2: strip test.dll
+	
+	命令格式; strip 二进制文件(exe,dll,ocx,sys)
+	
+	例子作用:去除程序文件调试信息与符号,降低文件体积,降低文件体积,降低文件体积<br></code></pre>

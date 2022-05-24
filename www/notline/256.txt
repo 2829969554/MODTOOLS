@@ -1,0 +1,198 @@
+<h1>t.html<br></h1><pre><code class="lang-html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+
+&lt;head&gt;
+&nbsp;&nbsp; &nbsp;&lt;meta charset="utf-8"&gt;
+&nbsp;&nbsp; &nbsp;&lt;title&gt;T&lt;/title&gt;
+&lt;/head&gt;
+
+&lt;body id="主页" style="display: none;"&gt;
+&nbsp;&nbsp; &nbsp;&lt;h1&gt;你好&lt;/h1&gt;
+
+&nbsp;&nbsp; &nbsp;&lt;div id='t1'&gt;
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&lt;p&gt;我的名字：{名字}&lt;/p&gt;
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&lt;p&gt;你的年龄：{年龄}&lt;/p&gt;
+&nbsp;&nbsp; &nbsp;&lt;/div&gt;
+
+&nbsp;&nbsp; &nbsp;&lt;div id='t2'&gt;
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&lt;p&gt;我的名字：{名字}&lt;/p&gt;
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&lt;p&gt;你的年龄：{年龄}&lt;/p&gt;
+&nbsp;&nbsp; &nbsp;&lt;/div&gt;
+
+&nbsp;&nbsp; &nbsp;&lt;table border="1" cellspacing="0" cellpadding="0" style="width: 400px;text-align: center;"&gt;
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&lt;tr&gt;
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&lt;th&gt;名字&lt;/th&gt;
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&lt;th&gt;年龄&lt;/th&gt;
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&lt;/tr&gt;
+
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&lt;tbody id='表格'&gt;
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&lt;tr&gt;
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&lt;td&gt;{名字}&lt;/td&gt;
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&lt;td&gt;{年龄}&lt;/td&gt;
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&lt;/tr&gt;
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&lt;/tbody&gt;
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;
+&nbsp;&nbsp; &nbsp;&lt;/table&gt;
+
+&nbsp;&nbsp; &nbsp;&lt;select id='列表'&gt;
+&nbsp;&nbsp; &nbsp;&nbsp; &lt;option value =""&gt;{名字}：{年龄}&lt;/option&gt;
+&nbsp;&nbsp; &nbsp;&lt;/select&gt;
+&lt;/body&gt;
+&lt;<b>script</b> type="text/java<b>script</b>" src="t<b>.js</b>"&gt;&lt;/<b>script</b>&gt;
+&lt;<b>script</b> type="text/java<b>script</b>" src="lib<b>.js</b>"&gt;&lt;/<b>script</b>&gt;
+&lt;/html&gt;<br></code></pre><h1>t<b>.js</b></h1><pre><code class="lang<b>.js</b>">&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; //是否预览
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;var debug=false;
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;//主页初始化
+&nbsp;&nbsp; &nbsp;　function 初始化(){
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;//TEST1
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;//修改表格
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;setbyidhtml('t1','名字','车子')
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;setbyidhtml('t1','年龄','100')
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;//TEST2
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;var $row ={"名字":'小三',"年龄":3};
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;setbyidhtmlrow('t2',$row);
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;//TEST3
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;var $row =[{"名字":'小红',"年龄":8},{"名字":'小王',"年龄":10},{"名字":'老王',"年龄":20}];
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;setbyidhtmlrows('表格',$row);
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;setbyidhtmlrows('列表',httpget('t.php',{'1':1}));
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;getbyid('主页').style.display="";
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;} <br></code></pre><p>lib<b>.js</b></p><pre><code class="lang<b>.js</b>">&nbsp;&nbsp;&nbsp; //<b>document</b>.getElementById的缩写
+&nbsp;&nbsp; &nbsp;function getbyid($a){
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;return <b>document</b>.getElementById($a);
+&nbsp;&nbsp; &nbsp;}
+&nbsp;&nbsp; &nbsp;
+&nbsp;&nbsp; &nbsp;function setbyidhtml($id,$name,$str){
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;getbyid($id).innerHTML=getbyid($id).innerHTML.replace('{' + $name + '}',$str);
+&nbsp;&nbsp; &nbsp;}
+&nbsp;&nbsp; &nbsp;function setbyidhtmlrow($id,$row){
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;if(typeof($row)=='string'){
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;$row=<b>eval</b>('(' + $row + ')');
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;}
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;Object.keys($row).forEach(function($a){
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;setbyidhtml($id,$a,$row[$a])
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;})
+&nbsp;&nbsp; &nbsp;}
+
+&nbsp;&nbsp; &nbsp;function setbyidhtmlrows($id,$row){
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;if(typeof($row)=='string'){
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;$row=<b>eval</b>('(' + $row + ')');
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;}
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;var $tmp =getbyid($id).innerHTML;
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;var tmp2=$tmp;
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;var html='';
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;for (var $i = 0; $i &lt; $row.length ; $i++) {
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;Object.keys($row[$i]).forEach(function($a,$tmp){
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;tmp2=tmp2.replace('{' + $a + '}',$row[$i][$a]);
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;});
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;html+=tmp2;
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;tmp2=$tmp;
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;}
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;//console.log(html);
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;getbyid($id).innerHTML=html;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;
+&nbsp;&nbsp; &nbsp;}
+&nbsp;&nbsp; &nbsp;//get
+&nbsp;&nbsp; &nbsp;function httpget(URL,PARAMS){
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;if(typeof($row)=='string'){
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;$row=<b>eval</b>('(' + $row + ')');
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;}
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;// 初始化XMLHttpRequest对象
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;var xmlrequest = new XMLHttpRequest();
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;var text='';
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;for (var x in PARAMS) {
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;text+=x + '=' + PARAMS[x]+'&amp;';
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;}
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;// 设置以POST方式发送请求，false是同步,true为异步
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;xmlrequest.open("GET", URL+'?'+text.substring(text,text.length-1), false); 
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;// 设置POST请求的请求头
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;xmlrequest.setRequestHeader("Content-Type"
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;, "application/x-www-form-urlencoded");
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;xmlrequest.send('a=1&amp;b=1');
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;//异步消息处理
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;/*xmlrequest.onreadystatechange = function(){
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (this.readyState == 4)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if(this.status == 200)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;return this.responseText;
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }
+
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;};*/
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;return xmlrequest.responseText;
+&nbsp;&nbsp; &nbsp;}
+&nbsp;&nbsp; &nbsp;//post
+&nbsp;&nbsp; &nbsp;function httppost(URL,PARAMS){
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;if(typeof($row)=='string'){
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;$row=<b>eval</b>('(' + $row + ')');
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;}
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;// 初始化XMLHttpRequest对象
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;var xmlrequest = new XMLHttpRequest();
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;var text='';
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;for (var x in PARAMS) {
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;text+=x + '=' + PARAMS[x]+'&amp;';
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;}
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;// 设置以POST方式发送请求，false是同步,true为异步
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;xmlrequest.open("POST", URL, false); 
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;// 设置POST请求的请求头
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;xmlrequest.setRequestHeader("Content-Type"
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;, "application/x-www-form-urlencoded");
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;xmlrequest.send(text.substring(text,text.length-1));
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;//异步消息处理
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;/*xmlrequest.onreadystatechange = function(){
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (this.readyState == 4)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if(this.status == 200)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;return this.responseText;
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }
+
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;};*/
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;return xmlrequest.responseText;
+&nbsp;&nbsp; &nbsp;}
+&nbsp;&nbsp; &nbsp;//模拟表单提交post
+&nbsp;&nbsp; &nbsp;function formpost(URL, PARAMS) {
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;if(typeof($row)=='string'){
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;$row=<b>eval</b>('(' + $row + ')');
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;}
+&nbsp;&nbsp; &nbsp;&nbsp; var temp = <b>document</b>.createElement("form");
+&nbsp;&nbsp; &nbsp;&nbsp; temp.action = URL;
+&nbsp;&nbsp; &nbsp;&nbsp; temp.method = "POST";
+&nbsp;&nbsp; &nbsp;&nbsp; temp.style.display = "none";
+&nbsp;&nbsp; &nbsp;&nbsp; for (var x in PARAMS) {
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; var opt = <b>document</b>.createElement("textarea");
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; opt.name = x;
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; opt.value = PARAMS[x];
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; temp.appendChild(opt);
+&nbsp;&nbsp; &nbsp;&nbsp; }
+&nbsp;&nbsp; &nbsp;&nbsp; <b>document</b>.body.appendChild(temp);
+&nbsp;&nbsp; &nbsp;&nbsp; temp.submit();
+&nbsp;&nbsp; &nbsp;&nbsp; return temp;
+&nbsp;&nbsp; &nbsp;}
+&nbsp;&nbsp; &nbsp;//模拟表单提交GET
+&nbsp;&nbsp; &nbsp;function formget(URL, PARAMS) {
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;if(typeof($row)=='string'){
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;$row=<b>eval</b>('(' + $row + ')');
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;}
+&nbsp;&nbsp; &nbsp;&nbsp; var temp = <b>document</b>.createElement("form");
+&nbsp;&nbsp; &nbsp;&nbsp; temp.action = URL;
+&nbsp;&nbsp; &nbsp;&nbsp; temp.method = "GET";
+&nbsp;&nbsp; &nbsp;&nbsp; temp.style.display = "none";
+&nbsp;&nbsp; &nbsp;&nbsp; for (var x in PARAMS) {
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; var opt = <b>document</b>.createElement("textarea");
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; opt.name = x;
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; opt.value = PARAMS[x];
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; // alert(opt.name)
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; temp.appendChild(opt);
+&nbsp;&nbsp; &nbsp;&nbsp; }
+&nbsp;&nbsp; &nbsp;&nbsp; <b>document</b>.body.appendChild(temp);
+&nbsp;&nbsp; &nbsp;&nbsp; temp.submit();
+&nbsp;&nbsp; &nbsp;&nbsp; return temp;
+&nbsp;&nbsp; &nbsp;}
+&nbsp;&nbsp; &nbsp;if(!debug){
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;<b>window</b>.onload = 初始化;
+&nbsp;&nbsp; &nbsp;}<br></code></pre>

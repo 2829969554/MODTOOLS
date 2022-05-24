@@ -1,0 +1,14 @@
+<h4>HMAC-PBKDF2</h4>
+    					<select id="key_size" class="input-small"  oninput="getbyid('y106').value=hmacpbkdf2(getbyid('uuustr').value,getbyid('salt').value,getbyid('key_size').value,getbyid('iterations').value);">
+    						<option value="4" selected="selected">128位</option>
+    						<option value="8">256位</option>
+    						<option value="16">512位</option>
+    					</select>
+<input type="number" id="iterations" class="input-small" placeholder="输入迭代次数（整数）" oninput="getbyid('y106').value=hmacpbkdf2(getbyid('uuustr').value,getbyid('salt').value,getbyid('key_size').value,getbyid('iterations').value);"></input>
+
+<input style="width: 80%;height: 20px;" type="text" id="salt" class="input-small" placeholder="在此输入盐（任意字符）"  oninput="getbyid('y106').value=hmacpbkdf2(getbyid('uuustr').value,getbyid('salt').value,getbyid('key_size').value,getbyid('iterations').value);"></input>
+
+
+<textarea style="width: 99%;height: 120px;" id="uuustr" placeholder="请输入源文本" oninput="getbyid('y106').value=hmacpbkdf2(this.value,getbyid('salt').value,getbyid('key_size').value,getbyid('iterations').value);"></textarea>
+
+<textarea  readonly="readonly" id="y106" style="width: 99%;height: 60px;" placeholder="这里显示PBKDF2编码,点击可复制到剪辑板。" onclick="copyhandle(this.value,'yes')"></textarea>
